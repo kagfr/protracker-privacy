@@ -1,121 +1,235 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Personvernerklæring – ProTracker</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Personvernerklæring — Smidd</title>
+<meta name="description" content="Hvordan Smidd behandler opplysningene dine.">
 <style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: #0A0A0A;
-    color: #FFFFFF;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-    line-height: 1.6;
-  }
-  h1 {
-    color: #F5C518;
-    font-size: 28px;
-    border-bottom: 2px solid #F5C518;
-    padding-bottom: 12px;
-  }
-  h2 {
-    color: #F5C518;
-    font-size: 20px;
-    margin-top: 36px;
-  }
-  p, li { color: #E5E5E5; }
-  ul { padding-left: 20px; }
-  a { color: #F5C518; }
-  .meta { color: #999999; font-size: 14px; margin-bottom: 32px; }
-  .card {
-    background: #161616;
-    border: 1px solid #2A2A2A;
-    border-radius: 10px;
-    padding: 20px 24px;
-    margin: 24px 0;
-  }
-  .kontakt {
-    background: #161616;
-    border: 1px solid #F5C518;
-    border-radius: 10px;
-    padding: 20px 24px;
-    margin-top: 40px;
-  }
+:root{--bg:#0A0A0A;--card:#151515;--blue:#4F8DFF;--gold:#F59E0B;--white:#fff;
+      --grey:#A1A1AA;--line:#2A2A2A}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--white);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,sans-serif;
+  font-size:17px;line-height:1.65;padding:34px 18px 80px;max-width:760px;margin-inline:auto}
+h1{font-size:30px;margin:0 0 4px;font-weight:800;letter-spacing:-.02em}
+.meta{color:var(--grey);font-size:15px;margin:0 0 30px}
+h2{font-size:21px;margin:38px 0 12px;font-weight:700;padding-top:16px;
+  border-top:1px solid var(--line)}
+h3{font-size:17px;margin:24px 0 8px;font-weight:700;color:var(--blue)}
+.kort{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:18px 20px;margin:18px 0}
+.kort.viktig{border-left:3px solid var(--blue)}
+.kort.gul{border-left:3px solid var(--gold)}
+a{color:var(--blue)}
+ul{padding-left:22px;margin:10px 0}
+li{margin:8px 0}
+table{width:100%;border-collapse:collapse;font-size:15.5px;margin:14px 0}
+th{text-align:left;color:var(--grey);font-size:12px;text-transform:uppercase;
+  letter-spacing:.06em;padding:8px 6px;border-bottom:1px solid var(--line)}
+td{padding:10px 6px;border-bottom:1px solid #1E1E1E;vertical-align:top}
+code{background:#0E0E0E;border:1px solid #303030;border-radius:5px;padding:1px 6px;
+  font-size:14px;color:var(--blue)}
+.liten{color:var(--grey);font-size:15px}
+footer{margin-top:46px;padding-top:22px;border-top:1px solid var(--line);
+  color:#6B6B72;font-size:14.5px;line-height:1.75}
 </style>
 </head>
 <body>
 
-<h1>Personvernerklæring for ProTracker</h1>
-<p class="meta">Sist oppdatert: 3. juli 2026</p>
+<h1>Personvernerklæring</h1>
+<p class="meta">Smidd · sist oppdatert 9. august 2026</p>
 
-<p>ProTracker ("appen", "vi", "oss") er en trenings- og ernæringsapp utviklet for det norske markedet. Denne personvernerklæringen forklarer hvilke opplysninger appen samler inn, hvorfor, og hvilke rettigheter du har.</p>
-
-<h2>1. Behandlingsansvarlig</h2>
-<p>ProTracker utvikles av en enkeltperson (Kristian) som behandlingsansvarlig for appen. Kontaktinformasjon finner du nederst på denne siden.</p>
-
-<h2>2. Hvilke opplysninger samler vi inn</h2>
-<div class="card">
-<p><strong>Kontoinformasjon:</strong> e-postadresse og passord (kryptert) hvis du oppretter bruker.</p>
-<p><strong>Treningsdata:</strong> loggførte treningsøkter, vekt/repetisjoner, personlige rekorder (PR), 1RM-beregninger, treningsstreak.</p>
-<p><strong>Ernæringsdata:</strong> loggførte måltider, makronæringsstoffer, kaloriinntak, skannede strekkoder.</p>
-<p><strong>Kroppsdata:</strong> vekt, kroppsmål, bilder du selv laster opp (f.eks. fremgangsbilder og InBody-skanninger som behandles med bildegjenkjenning på enheten).</p>
-<p><strong>Helserelaterte data (sensitive personopplysninger):</strong> menstruasjonssyklus, medisin-/tilskuddspåminnelser, søvnlogging, og valgfri daglig registrering av mentalt velvære.</p>
-<p><strong>Bruksdata:</strong> hvilke funksjoner du bruker, appinnstillinger, og teknisk informasjon (enhetstype, operativsystemversjon) for feilsøking.</p>
-<p><strong>Posisjon (valgfritt):</strong> kun hvis du aktivt bruker "finn nærmeste treningssenter"-funksjonen, og kun for å vise resultater i nærheten av deg.</p>
+<div class="kort viktig">
+<p style="margin:0 0 10px"><b>Kort fortalt.</b> Smidd samler inn helseopplysninger fordi
+appen ikke virker uten dem. Vi selger dem aldri, viser ingen reklame, og bruker ingen
+analyseverktøy eller sporing på tvers av apper.</p>
+<p style="margin:0">Du kan når som helst laste ned alt vi har om deg, eller slette det
+hele for godt — direkte i appen.</p>
 </div>
 
-<h2>3. Hvorfor vi samler inn opplysningene</h2>
-<ul>
-<li>For å levere kjernefunksjonaliteten i appen (logging, fremgang, statistikk)</li>
-<li>For å beregne og vise deg personlig tilpasset innhold (TDEE, makrobehov, rangeringssystem)</li>
-<li>For å lagre og synkronisere dataene dine på tvers av økter</li>
-<li>For å forbedre appen og rette feil</li>
-</ul>
-<p>Vi selger aldri dataene dine til tredjeparter, og vi bruker dem ikke til reklameformål.</p>
+<h2>1. Hvem som er ansvarlig</h2>
+<div class="kort">
+Kristian Andreas Gullbakk From<br>
+E-post: kagfrom@hotmail.com<br>
+Norge
+</div>
+<p>Kontakt oss på e-postadressen over om alt som gjelder personvern, innsyn eller sletting.</p>
 
-<h2>4. Sensitive helseopplysninger</h2>
-<p>ProTracker lar deg valgfritt registrere svært personlig informasjon, som menstruasjonssyklus og mentalt velvære. Denne informasjonen:</p>
+<h2>2. Hva vi behandler</h2>
+
+<h3>Konto</h3>
+<p>Vi lagrer <b>e-postadresse</b>, <b>fødselsår</b>, <b>passord som kryptografisk hash</b>
+(aldri passordet selv), <b>samtykke til helsedata med tidspunkt</b>, og
+<b>opprettelsestidspunkt</b>. Ikke navn, ikke telefonnummer, ikke adresse.</p>
+
+<h3>Helse- og treningsopplysninger</h3>
 <ul>
-<li>er alltid valgfri å fylle ut, og kan skrus av som funksjon i innstillinger</li>
-<li>lagres kryptert og knyttes kun til din brukerkonto</li>
-<li>deles aldri med tredjeparter, arbeidsgivere, forsikringsselskaper eller andre</li>
-<li>brukes utelukkende til å vise deg din egen historikk og trender i appen</li>
+  <li><b>Kosthold:</b> måltider, matvarer, kalorier, protein, karbohydrater, fett,
+      mikronæringsstoffer og væskeinntak.</li>
+  <li><b>Kropp og mål:</b> vekt, vektutvikling, høyde, alder, kjønn, aktivitetsnivå,
+      kaloribudsjett og målsettinger.</li>
+  <li><b>Dagsform:</b> søvn, energi, humør og stress.</li>
+  <li><b>Trening:</b> styrkeøkter med øvelser, sett, vekt, repetisjoner og opplevd
+      anstrengelse; kondisjons- og intervalløkter med varighet.</li>
+  <li><b>Syklusdata:</b> startdato og varighet for menstruasjon, beregnet syklusfase, og
+      symptomer du selv registrerer. Se punkt 5.</li>
+  <li><b>Medisiner:</b> medisiner du selv legger inn, med doser og tidspunkt for når du
+      har tatt dem.</li>
+  <li><b>Psykisk helse:</b> humør og daglige innsjekkinger du selv registrerer.</li>
+  <li><b>Fremgangsbilder:</b> bilder du selv tar av deg selv. De lagres <b>bare på
+      telefonen</b> og lastes aldri opp til serveren vår.</li>
+  <li><b>Fra Health Connect:</b> søvn, skritt og puls. Appen <b>leser bare</b> — den
+      skriver aldri noe tilbake til Health Connect.</li>
 </ul>
 
-<h2>5. Tredjepartstjenester</h2>
-<div class="card">
-<p><strong>Open Food Facts:</strong> når du skanner en strekkode, sendes strekkoden til Open Food Facts sin åpne database for å hente produktinformasjon. Ingen personopplysninger om deg følger med denne forespørselen.</p>
-<p><strong>Google Maps/Places:</strong> brukes kun når du aktivt søker etter treningssentre i nærheten, for å vise kart og stedsinformasjon.</p>
-<p><strong>ML Kit (Google):</strong> brukes til tekstgjenkjenning (OCR) av InBody-resultater. Bildebehandlingen skjer på enheten din, og bildene sendes ikke til Google sine servere.</p>
+<h3>Posisjon</h3>
+<p>GPS-spor fra løpeturer du selv starter. Posisjon brukes også hvis du søker etter
+treningssentre i nærheten — da sendes bare et oppslag, og posisjonen din lagres ikke.
+Se punkt 4.</p>
+
+<h3>Mikrofon og kamera</h3>
+<ul>
+  <li><b>Talelogging:</b> talegjenkjenningen skjer på telefonen. Er teksten vanskelig å
+      tolke, sendes <b>den ferdige teksten</b> — ikke lyden — til AI-leverandøren for
+      tolking. Lydopptak forlater aldri enheten og lagres ikke.</li>
+  <li><b>Strekkodeskanning:</b> kameraet leser strekkoden lokalt på enheten. Bildet lagres
+      ikke og sendes ingen steder.</li>
+  <li><b>Tekstgjenkjenning (InBody-utskrift):</b> leses lokalt på enheten. Bildet lagres ikke.</li>
+</ul>
+
+<h3>Handleliste</h3>
+<p>Varer du legger til. Handlelista er personlig og deles ikke med andre brukere.
+Helseopplysningene dine deles aldri med noen.</p>
+
+<h3>Det vi ikke gjør</h3>
+<div class="kort">
+<p style="margin:0 0 10px"><b>Smidd bruker ingen analyseverktøy, ingen sporing på tvers av
+apper og ingen reklame-SDK-er.</b> Det finnes verken Firebase, Crashlytics, Sentry eller
+tilsvarende i appen. Vi selger ingen opplysninger, deler aldri helsedata med annonsører,
+datameglere eller forsikringsselskap, og bygger ingen markedsføringsprofil av deg.</p>
+<p style="margin:0"><b>Krasjer appen</b>, skrives feilmeldingen til en fil på telefonen din
+og vises for deg neste gang du åpner appen. Den sendes ikke noe sted automatisk — du
+velger selv om du vil dele den med oss. Rapporten inneholder feilmeldingen, apputgaven og
+telefonmodellen, ikke helseopplysningene dine.</p>
 </div>
 
-<h2>6. Lagring og sikkerhet</h2>
-<p>Dataene dine lagres på sikre servere med kryptert tilkobling (HTTPS) og passordbeskyttelse (JWT-autentisering). Passord lagres aldri i klartekst.</p>
-
-<h2>7. Dine rettigheter</h2>
-<p>I henhold til GDPR og norsk personopplysningslov har du rett til å:</p>
+<h2>3. Rettslig grunnlag</h2>
+<p>Helseopplysninger er en særlig kategori personopplysninger etter personvernforordningen
+artikkel 9. Vi behandler dem bare når du har gitt <b>uttrykkelig samtykke</b>, jf. artikkel 9
+nr. 2 bokstav a. Samtykket gir du ved oppstart og kan trekke tilbake når som helst.</p>
 <ul>
-<li>Få innsyn i hvilke opplysninger vi har lagret om deg</li>
-<li>Få rettet feilaktige opplysninger</li>
-<li>Be om at dataene dine slettes ("retten til å bli glemt")</li>
-<li>Eksportere dataene dine</li>
-<li>Trekke tilbake samtykke til enhver tid ved å slette kontoen din i appen</li>
+  <li><b>Levere appens funksjoner:</b> artikkel 6 nr. 1 bokstav b, kombinert med uttrykkelig
+      samtykke for helseopplysningene.</li>
+  <li><b>AI-coachen:</b> eget, uttrykkelig samtykke — av som standard. Skrur du det av,
+      virker chatten fortsatt, men uten tallene dine.</li>
+  <li><b>Posisjon:</b> eget samtykke, spurt om første gang du starter en løpetur.</li>
+  <li><b>Mikrofon og kamera:</b> eget samtykke, spurt om ved første bruk.</li>
+  <li><b>Drift og sikkerhet:</b> berettiget interesse, artikkel 6 nr. 1 bokstav f.</li>
 </ul>
-<p>Du kan slette hele kontoen din, inkludert alle lagrede data, direkte i appens innstillinger under "Slett konto".</p>
+<p class="liten">Samtykkene er uavhengige. Du kan bruke Smidd uten coachen, uten GPS,
+uten mikrofon og uten kamera.</p>
 
-<h2>8. Aldersgrense</h2>
-<p>ProTracker er ikke rettet mot barn under 16 år. Vi samler ikke bevisst inn data fra barn under denne aldersgrensen.</p>
-
-<h2>9. Endringer i personvernerklæringen</h2>
-<p>Vi kan oppdatere denne personvernerklæringen ved behov. Vesentlige endringer vil bli varslet i appen. Datoen øverst på siden viser når erklæringen sist ble oppdatert.</p>
-
-<div class="kontakt">
-<h2 style="margin-top:0;">Kontakt oss</h2>
-<p>Har du spørsmål om personvern eller ønsker å utøve dine rettigheter, kontakt:</p>
-<p><strong>E-post:</strong> <a href="mailto:kagfrom@hotmail.com">kagfrom@hotmail.com</a></p>
+<h2>4. Særlig om GPS-spor</h2>
+<div class="kort gul">
+<p style="margin:0"><b>GPS-spor lagres bare på telefonen din.</b> De synkroniseres ikke til
+serveren vår og forlater ikke enheten. Avinstallerer du appen, er sporene borte.</p>
 </div>
+<p>Posisjon er blant de mest avslørende opplysningene som finnes — den viser hvor du bor og
+når du ikke er hjemme. Derfor har vi valgt at den ikke skal ut av telefonen i det hele tatt.</p>
+
+<h2>5. Særlig om syklusdata</h2>
+<p>Vi registrerer startdato og varighet for menstruasjon, regner ut hvilken syklusfase du er
+i, og lagrer symptomene du selv velger å føre opp. Du styrer selv om syklusdelen i det hele
+tatt vises i appen.</p>
+<p>Syklusopplysninger er helseopplysninger etter artikkel 9 og behandles med samme strenge
+krav som resten. De brukes bare til å vise deg din egen syklus og til å sette trening og
+dagsform i sammenheng. De deles aldri, og du kan slette dem separat.</p>
+
+<h2>6. AI-coachen</h2>
+<p>Slår du på deling av data med coachen, sendes de relevante tallene dine til
+<b>Anthropic PBC</b>, som leverer språkmodellen Claude. Overføringen skjer kryptert.</p>
+<table>
+  <tr><th>Hva</th><th>Detaljer</th></tr>
+  <tr><td>Leverandør</td><td>Anthropic PBC</td></tr>
+  <tr><td>Land</td><td>USA — altså utenfor EØS</td></tr>
+  <tr><td>Overføringsgrunnlag</td><td>Databehandleravtale med Anthropic, med EUs standard personvernbestemmelser (SCC) som overføringsgrunnlag</td></tr>
+  <tr><td>Hva som sendes</td><td>Trenings-, kosthold-, søvn- og dagsformtall, og teksten i spørsmålene dine</td></tr>
+  <tr><td>Hva som ikke sendes</td><td>Lydopptak, bilder, GPS-spor, e-postadressen din</td></tr>
+</table>
+<p class="liten">Innholdet i coach-samtalene logges aldri i klartekst i serverloggene våre.
+Det er teknisk sperret, ikke bare en regel.</p>
+
+<h2>7. Hvem andre som er involvert</h2>
+<table>
+  <tr><th>Mottaker</th><th>Hva</th><th>Hvor</th></tr>
+  <tr><td>DigitalOcean</td><td>Serverdrift og lagring</td><td>Frankfurt, Tyskland (EØS)</td></tr>
+  <tr><td>Anthropic PBC</td><td>AI-coach og taletolking</td><td>USA</td></tr>
+  <tr><td>Open Food Facts</td><td>Oppslag på strekkoder. Kun strekkoden sendes — aldri hvem du er.</td><td>EU</td></tr>
+  <tr><td>Google Play</td><td>Distribusjon av appen</td><td>—</td></tr>
+</table>
+
+<h2>8. Hva serveren logger</h2>
+<p>Serverloggene inneholder <b>metode, sti, statuskode og hvor lang tid kallet tok</b>.
+Ikke mer.</p>
+<p>Innholdet i forespørsler og svar, innloggingstokener, passord, e-postadresser og
+taletekst er <b>eksplisitt sensurert bort før noe skrives til logg</b>. Det er håndhevet i
+koden, ikke bare et prinsipp.</p>
+<p class="liten">Loggene inneholder ingen helseopplysninger, roteres fortløpende, og brukes
+bare til feilsøking og til å hindre misbruk.</p>
+
+<h2>9. Hvor lenge vi lagrer</h2>
+<ul>
+  <li><b>Kontoen og dataene dine:</b> til du sletter dem. Vi rydder ikke bort noe av oss selv.</li>
+  <li><b>Etter sletting:</b> borte fra databasen med én gang. Kan ligge igjen i en
+      sikkerhetskopi i inntil 30 dager før den roteres ut, og brukes ikke til noe imens.</li>
+  <li><b>Innloggingstokener:</b> 30 dager, deretter må du logge inn på nytt.</li>
+  <li><b>Serverlogger:</b> se punkt 8.</li>
+</ul>
+
+<h2>10. Rettighetene dine</h2>
+<p>Du har rett til innsyn, retting, sletting, begrensning, dataportabilitet og til å motsette
+deg behandling. To av dem er bygget rett inn i appen:</p>
+<div class="kort">
+<p style="margin:0 0 8px"><b>Last ned alt vi har om deg.</b> Du får en fullstendig fil med
+kontoen din og alle loggede data, i et format som kan leses av andre programmer.
+Dette er dataportabilitet etter artikkel 20.</p>
+<p style="margin:0"><b>Slett alt.</b> Innstillinger → Slett konto. Du bekrefter med
+passordet ditt, og så er kontoen, alle helsedataene og alle innloggingene borte i én
+operasjon. Dette kan ikke angres. Se også <a href="slett-konto.html">slette-siden</a>,
+som virker uten at du har appen installert.</p>
+</div>
+<p>Du kan trekke tilbake et samtykke når som helst uten at det påvirker lovligheten av det
+som allerede er gjort. Du kan klage til <b>Datatilsynet</b> hvis du mener vi behandler
+opplysningene dine feil.</p>
+
+<h2>11. Sikkerhet</h2>
+<ul>
+  <li>All trafikk mellom appen og serveren går kryptert over HTTPS.</li>
+  <li>Passord lagres som hash, aldri i klartekst.</li>
+  <li>Innloggingstokener lagres kryptert på telefonen.</li>
+  <li>Innlogging, registrering og oppslag er tempobegrenset for å hindre misbruk.</li>
+  <li>API-nøkler ligger kun på serveren og er aldri en del av appen.</li>
+  <li>Ved brudd på personopplysningssikkerheten varsles Datatilsynet innen 72 timer, og du
+      varsles direkte hvis bruddet innebærer høy risiko for deg.</li>
+</ul>
+
+<h2>12. Aldersgrense</h2>
+<p>Smidd er for deg som har fylt <b>18 år</b>. Helseopplysninger er en særlig kategori, og
+etter Datatilsynets veiledning er aldersgrensen for å samtykke til behandling av slike
+opplysninger 18 år.</p>
+
+<h2>13. Endringer</h2>
+<p>Endrer vi denne erklæringen på en måte som betyr noe for deg, sier vi fra i appen før
+endringen trer i kraft. Datoen øverst viser når den sist ble oppdatert.</p>
+
+<footer>
+<b>Kontakt</b><br>
+Kristian Andreas Gullbakk From · kagfrom@hotmail.com · Norge<br><br>
+Tilsynsmyndighet: Datatilsynet, Postboks 458 Sentrum, 0105 Oslo ·
+<a href="https://www.datatilsynet.no">datatilsynet.no</a><br><br>
+
+</footer>
 
 </body>
 </html>
