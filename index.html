@@ -38,7 +38,7 @@ footer{margin-top:46px;padding-top:22px;border-top:1px solid var(--line);
 <body>
 
 <h1>Personvernerklæring</h1>
-<p class="meta">Smidd · sist oppdatert 9. august 2026</p>
+<p class="meta">Smidd · sist oppdatert 14. august 2026 · <a href="en.html">English version</a></p>
 
 <div class="kort viktig">
 <p style="margin:0 0 10px"><b>Kort fortalt.</b> Smidd samler inn helseopplysninger fordi
@@ -85,8 +85,8 @@ Norge
 
 <h3>Posisjon</h3>
 <p>GPS-spor fra løpeturer du selv starter. Posisjon brukes også hvis du søker etter
-treningssentre i nærheten — da sendes bare et oppslag, og posisjonen din lagres ikke.
-Se punkt 4.</p>
+treningssentre i nærheten — da sendes posisjonen din til <b>Google Maps</b> for selve
+søket. Den lagres ikke hos oss, og sendes bare når du aktivt søker. Se punkt 4 og 7.</p>
 
 <h3>Mikrofon og kamera</h3>
 <ul>
@@ -114,6 +114,11 @@ velger selv om du vil dele den med oss. Rapporten inneholder feilmeldingen, appu
 telefonmodellen, ikke helseopplysningene dine.</p>
 </div>
 
+<h3>Widgeter på hjemskjermen</h3>
+<p class="liten">Velger du å legge en Smidd-widget på hjemskjermen, kan den vise helsetall
+(f.eks. kalorier) utenfor appen — også når telefonen ikke er låst opp av deg. Du velger
+selv om du vil bruke widgetene.</p>
+
 <h2>3. Rettslig grunnlag</h2>
 <p>Helseopplysninger er en særlig kategori personopplysninger etter personvernforordningen
 artikkel 9. Vi behandler dem bare når du har gitt <b>uttrykkelig samtykke</b>, jf. artikkel 9
@@ -121,8 +126,9 @@ nr. 2 bokstav a. Samtykket gir du ved oppstart og kan trekke tilbake når som he
 <ul>
   <li><b>Levere appens funksjoner:</b> artikkel 6 nr. 1 bokstav b, kombinert med uttrykkelig
       samtykke for helseopplysningene.</li>
-  <li><b>AI-coachen:</b> eget, uttrykkelig samtykke — av som standard. Skrur du det av,
-      virker chatten fortsatt, men uten tallene dine.</li>
+  <li><b>AI-funksjonene</b> (coach, matbilde, taletolking): data sendes <b>kun i det
+      øyeblikket du selv bruker funksjonen</b>. Ingen bakgrunnsdeling — bruker du dem ikke,
+      sendes ingenting.</li>
   <li><b>Posisjon:</b> eget samtykke, spurt om første gang du starter en løpetur.</li>
   <li><b>Mikrofon og kamera:</b> eget samtykke, spurt om ved første bruk.</li>
   <li><b>Drift og sikkerhet:</b> berettiget interesse, artikkel 6 nr. 1 bokstav f.</li>
@@ -140,22 +146,26 @@ når du ikke er hjemme. Derfor har vi valgt at den ikke skal ut av telefonen i d
 
 <h2>5. Særlig om syklusdata</h2>
 <p>Vi registrerer startdato og varighet for menstruasjon, regner ut hvilken syklusfase du er
-i, og lagrer symptomene du selv velger å føre opp. Du styrer selv om syklusdelen i det hele
-tatt vises i appen.</p>
+i, og lagrer symptomene du selv velger å føre opp. Syklusdelen vises automatisk når du har
+angitt kjønn «Kvinne» i profilen din, og finnes ellers ikke i appen.</p>
 <p>Syklusopplysninger er helseopplysninger etter artikkel 9 og behandles med samme strenge
 krav som resten. De brukes bare til å vise deg din egen syklus og til å sette trening og
 dagsform i sammenheng. De deles aldri, og du kan slette dem separat.</p>
 
 <h2>6. AI-coachen</h2>
-<p>Slår du på deling av data med coachen, sendes de relevante tallene dine til
+<p>Når du bruker AI-funksjonene, sendes det som trengs for akkurat det svaret til
 <b>Anthropic PBC</b>, som leverer språkmodellen Claude. Overføringen skjer kryptert.</p>
 <table>
   <tr><th>Hva</th><th>Detaljer</th></tr>
   <tr><td>Leverandør</td><td>Anthropic PBC</td></tr>
   <tr><td>Land</td><td>USA — altså utenfor EØS</td></tr>
   <tr><td>Overføringsgrunnlag</td><td>Databehandleravtale med Anthropic, med EUs standard personvernbestemmelser (SCC) som overføringsgrunnlag</td></tr>
-  <tr><td>Hva som sendes</td><td>Trenings-, kosthold-, søvn- og dagsformtall, og teksten i spørsmålene dine</td></tr>
-  <tr><td>Hva som ikke sendes</td><td>Lydopptak, bilder, GPS-spor, e-postadressen din</td></tr>
+  <tr><td>Hva som sendes</td><td>Trenings-, kosthold-, søvn- og dagsformtall, teksten i
+      spørsmålene dine — og <b>matbilder</b>, hvis du bruker matbilde-funksjonen: bildet
+      sendes for analyse, behandles i minnet og <b>lagres aldri</b> — verken hos oss eller
+      som fil, i database eller i logg</td></tr>
+  <tr><td>Hva som ikke sendes</td><td>Lydopptak, fremgangsbilder, GPS-spor, e-postadressen
+      din, navnet ditt</td></tr>
 </table>
 <p class="liten">Innholdet i coach-samtalene logges aldri i klartekst i serverloggene våre.
 Det er teknisk sperret, ikke bare en regel.</p>
@@ -166,10 +176,42 @@ Det er teknisk sperret, ikke bare en regel.</p>
   <tr><td>DigitalOcean</td><td>Serverdrift og lagring</td><td>Frankfurt, Tyskland (EØS)</td></tr>
   <tr><td>Anthropic PBC</td><td>AI-coach og taletolking</td><td>USA</td></tr>
   <tr><td>Open Food Facts</td><td>Oppslag på strekkoder. Kun strekkoden sendes — aldri hvem du er.</td><td>EU</td></tr>
-  <tr><td>Google Play</td><td>Distribusjon av appen</td><td>—</td></tr>
+  <tr><td>Google Maps Platform</td><td>Søk etter treningssentre i nærheten. Posisjonen din
+      sendes kun idet du søker, og lagres ikke hos oss.</td><td>USA/globalt</td></tr>
+  <tr><td>Google Play</td><td>Distribusjon av appen og behandling av kjøp</td><td>—</td></tr>
 </table>
 
-<h2>8. Hva serveren logger</h2>
+<h2>8. Deling med personlig trener (PT)</h2>
+<p>Du kan velge å gi <b>en navngitt PT</b> du selv inviterer, innsyn i utvalgte data.
+Slik virker det:</p>
+<ul>
+  <li><b>Alt er av som standard.</b> Ingen ser noe før du aktivt slår det på.</li>
+  <li><b>Du velger per datatype</b> — økter, vekt, kosthold, løpeturer, dagsform — hver for seg.</li>
+  <li><b>PT-en kan aldri be om tilgang.</b> Det finnes ingen slik funksjon. Initiativet er
+      alltid ditt.</li>
+  <li><b>Du kan trekke tilgangen når som helst</b>, uten begrunnelse. PT-en varsles ikke.</li>
+  <li><b>Tilgangen opphører automatisk</b> hvis du melder deg ut av senteret, bytter senter,
+      eller PT-en slutter.</li>
+  <li><b>Coach-samtaler og matbilder kan aldri deles</b> — heller ikke om du velger «del alt».</li>
+</ul>
+
+<h2>9. Treningssenter</h2>
+<p>Knytter du deg til et treningssenter med senterkode, får <b>du</b> tilgang til senterets
+programmer og utseende i appen. Koden gir <b>aldri senteret tilgang til dine data</b>.</p>
+<div class="kort viktig">
+<p style="margin:0"><b>Senteret ser aldri enkeltpersoner.</b> Senteret får kun se samlede
+tall — for eksempel hvor mange medlemmer som har trent siste uke — og bare når gruppen er
+på minst 10 personer. Ingen navn, ingen enkeltdata, ingen liste over hvem som ikke har
+trent. Det en PT ser gjennom deling (punkt 8), inngår aldri i senterets tall.</p>
+</div>
+<p>Melder du deg ut, mister du senterets innhold — men beholder alle dine egne data.</p>
+
+<h2>10. Kjøp</h2>
+<p>Kjøp i appen (treningsplaner) gjøres gjennom <b>Google Play</b>. Vi ser aldri
+kortopplysningene dine. Det vi mottar, er et kjøpsbevis (token) fra Google, som serveren
+bruker til å bekrefte at kjøpet er ekte. Har du kjøpt en plan, beholder du den.</p>
+
+<h2>11. Hva serveren logger</h2>
 <p>Serverloggene inneholder <b>metode, sti, statuskode og hvor lang tid kallet tok</b>.
 Ikke mer.</p>
 <p>Innholdet i forespørsler og svar, innloggingstokener, passord, e-postadresser og
@@ -178,16 +220,16 @@ koden, ikke bare et prinsipp.</p>
 <p class="liten">Loggene inneholder ingen helseopplysninger, roteres fortløpende, og brukes
 bare til feilsøking og til å hindre misbruk.</p>
 
-<h2>9. Hvor lenge vi lagrer</h2>
+<h2>12. Hvor lenge vi lagrer</h2>
 <ul>
   <li><b>Kontoen og dataene dine:</b> til du sletter dem. Vi rydder ikke bort noe av oss selv.</li>
   <li><b>Etter sletting:</b> borte fra databasen med én gang. Kan ligge igjen i en
       sikkerhetskopi i inntil 30 dager før den roteres ut, og brukes ikke til noe imens.</li>
   <li><b>Innloggingstokener:</b> 30 dager, deretter må du logge inn på nytt.</li>
-  <li><b>Serverlogger:</b> se punkt 8.</li>
+  <li><b>Serverlogger:</b> se punkt 11.</li>
 </ul>
 
-<h2>10. Rettighetene dine</h2>
+<h2>13. Rettighetene dine</h2>
 <p>Du har rett til innsyn, retting, sletting, begrensning, dataportabilitet og til å motsette
 deg behandling. To av dem er bygget rett inn i appen:</p>
 <div class="kort">
@@ -203,7 +245,7 @@ som virker uten at du har appen installert.</p>
 som allerede er gjort. Du kan klage til <b>Datatilsynet</b> hvis du mener vi behandler
 opplysningene dine feil.</p>
 
-<h2>11. Sikkerhet</h2>
+<h2>14. Sikkerhet</h2>
 <ul>
   <li>All trafikk mellom appen og serveren går kryptert over HTTPS.</li>
   <li>Passord lagres som hash, aldri i klartekst.</li>
@@ -214,12 +256,12 @@ opplysningene dine feil.</p>
       varsles direkte hvis bruddet innebærer høy risiko for deg.</li>
 </ul>
 
-<h2>12. Aldersgrense</h2>
+<h2>15. Aldersgrense</h2>
 <p>Smidd er for deg som har fylt <b>18 år</b>. Helseopplysninger er en særlig kategori, og
 etter Datatilsynets veiledning er aldersgrensen for å samtykke til behandling av slike
 opplysninger 18 år.</p>
 
-<h2>13. Endringer</h2>
+<h2>16. Endringer</h2>
 <p>Endrer vi denne erklæringen på en måte som betyr noe for deg, sier vi fra i appen før
 endringen trer i kraft. Datoen øverst viser når den sist ble oppdatert.</p>
 
