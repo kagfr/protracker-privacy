@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="no" data-tema="lys">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Renteradar — regn på boligkjøpet</title>
+<meta name="description" content="Regn på boliglån, deleie og leie i samme verktøy. Live styringsrente fra Norges Bank. Alt regnes lokalt i nettleseren.">
+<style>
+/* ══════════ TEMA — kategoripalett validert for CVD og kontrast i begge temaer ══════════ */
+:root[data-tema="lys"]{
+  --flate:#FFFFFF; --flate2:#F7F8FA; --flate3:#EEF1F5; --kant:#E2E6EC; --kant2:#D3D9E2;
+  --ink:#0F172A; --ink2:#475569; --ink3:#8A95A5;
+  --c1:#2563EB; --c2:#0D9488; --c3:#D97706; --c4:#DB2777; --c5:#7C3AED;
+  --god:#047857; --varsel:#B45309; --kritisk:#BE123C;
+  --godBg:#E7F6EF; --varselBg:#FDF3E3; --kritiskBg:#FDECEF;
+  --skygge:0 1px 2px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.05);
+}
+:root[data-tema="mork"]{
+  --flate:#0F1115; --flate2:#171A20; --flate3:#1E222A; --kant:#282D37; --kant2:#39404D;
+  --ink:#F3F5F8; --ink2:#A8B2C1; --ink3:#6E7887;
+  --c1:#3B82F6; --c2:#0D9488; --c3:#B87D1A; --c4:#DB2777; --c5:#7C4DE0;
+  --god:#34D399; --varsel:#FBBF24; --kritisk:#FB7185;
+  --godBg:#0C2A20; --varselBg:#2B220C; --kritiskBg:#2C1119;
+  --skygge:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--flate2);color:var(--ink);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,sans-serif;
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.side{max-width:720px;margin-inline:auto;padding:20px 16px 90px}
+.topp{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.merke{display:flex;align-items:center;gap:9px}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--c1);position:relative;flex:none}
+.logo::after{content:'';position:absolute;inset:7px;border-radius:50%;border:2.5px solid #fff;
+  border-right-color:transparent;border-bottom-color:transparent;transform:rotate(-45deg)}
+h1{font-size:21px;font-weight:800;letter-spacing:-.02em;margin:0}
+.undertittel{color:var(--ink3);font-size:12.5px;margin:6px 0 16px}
+.ikonknapp{background:var(--flate);border:1px solid var(--kant);border-radius:9px;
+  color:var(--ink2);font-size:13px;font-weight:600;padding:7px 11px;cursor:pointer}
+.kort{background:var(--flate);border:1px solid var(--kant);border-radius:16px;
+  padding:18px;margin:12px 0;box-shadow:var(--skygge)}
+h2{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink3);margin:26px 0 8px}
+.faner{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 12px}
+.fane{background:var(--flate);border:1px solid var(--kant);border-radius:99px;color:var(--ink2);
+  font-size:13px;font-weight:600;padding:7px 14px;cursor:pointer;white-space:nowrap}
+.fane.på{background:var(--c1);border-color:var(--c1);color:#fff}
+.fane.ny{border-style:dashed;color:var(--c1)}
+.hero{background:var(--flate);border:1px solid var(--kant);border-radius:18px;
+  padding:20px;box-shadow:var(--skygge);margin-bottom:12px}
+.hero .l{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);font-weight:800}
+.hero .v{font-size:clamp(34px,10vw,46px);font-weight:800;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;line-height:1.1}
+.hero .v small{font-size:.42em;font-weight:700;color:var(--ink2)}
+.hero .diff{font-size:13.5px;font-weight:700;min-height:1.3em}
+.stabel{display:flex;gap:2px;height:14px;border-radius:8px;overflow:hidden;margin:14px 0 8px}
+.stabel div{transition:flex .25s ease}
+.tegn{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--ink2)}
+.tegn b{color:var(--ink);font-variant-numeric:tabular-nums}
+.prikk{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:1px}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.chip{background:var(--flate);border:1px solid var(--kant);border-radius:99px;color:var(--ink2);
+  font-size:12.5px;font-weight:600;padding:6px 12px;cursor:pointer}
+.chip.på{background:var(--ink);border-color:var(--ink);color:var(--flate)}
+.spak{background:var(--flate);border:1px solid var(--kant);border-radius:14px;
+  padding:13px 16px;margin:9px 0;box-shadow:var(--skygge)}
+.spak .rad{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.spak .navn{font-size:14px;font-weight:700}
+.spak .verdi{font-size:16px;font-weight:800;color:var(--c1);font-variant-numeric:tabular-nums}
+.spak .folge{font-size:12px;color:var(--ink3);margin-top:5px;min-height:1.25em}
+.spak .folge b{color:var(--ink2)}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;
+  background:linear-gradient(to right,var(--c1) 0%,var(--c1) var(--p,50%),var(--flate3) var(--p,50%));
+  outline:none;margin:8px 0 0;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:24px;height:24px;
+  border-radius:50%;background:var(--flate);border:3px solid var(--c1);cursor:pointer;
+  box-shadow:0 1px 4px rgba(15,23,42,.2)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--flate);
+  border:3px solid var(--c1);cursor:pointer}
+.rutenett{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:10px}
+.res{background:var(--flate);border:1px solid var(--kant);border-radius:14px;padding:13px 14px;
+  min-width:0;box-shadow:var(--skygge)}
+.res .l{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);font-weight:800}
+.res .v{font-size:clamp(17px,4.6vw,23px);font-weight:800;margin-top:3px;
+  font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res .d{font-size:11.5px;color:var(--ink2);margin-top:2px}
+.merkelapp{display:inline-block;font-size:11px;font-weight:800;border-radius:99px;padding:2px 9px;margin-top:5px}
+.merkelapp.god{background:var(--godBg);color:var(--god)}
+.merkelapp.kritisk{background:var(--kritiskBg);color:var(--kritisk)}
+details{background:var(--flate);border:1px solid var(--kant);border-radius:14px;margin:9px 0;
+  overflow:hidden;box-shadow:var(--skygge)}
+summary{padding:14px 16px;font-size:14px;font-weight:700;cursor:pointer;list-style:none;
+  display:flex;align-items:center;gap:9px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'';width:0;height:0;border:5px solid transparent;
+  border-left-color:var(--c1);transition:transform .18s ease;flex:none}
+details[open] summary::before{transform:rotate(90deg) translateX(-2px)}
+.innhold{padding:0 16px 16px}
+.rull{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px}
+.rull table{min-width:440px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+th{color:var(--ink3);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;text-align:right;
+  padding:6px;border-bottom:1px solid var(--kant);font-weight:800;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:7px 6px;text-align:right;border-bottom:1px solid var(--flate3);white-space:nowrap}
+tr.sum td{background:var(--flate3);font-weight:800}
+tr.best td{color:var(--god);font-weight:700}
+tr.klikk{cursor:pointer}
+tr.klikk:hover td{background:var(--flate3)}
+.felt{display:grid;grid-template-columns:1fr minmax(104px,150px);gap:10px;align-items:center;
+  padding:7px 0;border-bottom:1px solid var(--flate3)}
+.felt:last-child{border-bottom:none}
+.felt label{font-size:13.5px;color:var(--ink2)}
+.felt input{background:var(--flate2);border:1px solid var(--kant);border-radius:9px;color:var(--ink);
+  font-size:14.5px;padding:8px 10px;width:100%;text-align:right;font-variant-numeric:tabular-nums;min-width:0}
+.felt input:focus{outline:none;border-color:var(--c1)}
+.sok{background:var(--flate2);border:1px solid var(--kant);border-radius:10px;color:var(--ink);
+  font-size:14.5px;padding:10px 12px;width:100%;margin-bottom:10px}
+.sok:focus{outline:none;border-color:var(--c1)}
+.knapp{background:var(--c1);color:#fff;border:none;border-radius:10px;font-weight:700;
+  font-size:14px;padding:9px 15px;cursor:pointer}
+.knapp.sek{background:var(--flate);color:var(--ink2);border:1px solid var(--kant)}
+.knapp.fare{background:var(--flate);color:var(--kritisk);border:1px solid var(--kant)}
+.knapp.mini{padding:4px 10px;font-size:12px;border-radius:8px}
+.knapperad{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.status{font-size:12.5px;color:var(--ink3)}
+.graf{width:100%;display:block;touch-action:pan-y}
+.notis{border-left:3px solid var(--c1);padding:11px 14px;background:var(--flate2);
+  border-radius:0 10px 10px 0;font-size:13px;color:var(--ink2);margin:10px 0}
+.notis b{color:var(--ink)}
+#tt{position:fixed;pointer-events:none;background:var(--ink);color:var(--flate);border-radius:9px;
+  padding:7px 11px;font-size:12.5px;display:none;z-index:99;box-shadow:0 8px 26px rgba(0,0,0,.3);
+  font-variant-numeric:tabular-nums}
+.valg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:11px;margin-top:14px}
+.valgkort{background:var(--flate2);border:1px solid var(--kant);border-radius:14px;padding:16px;
+  cursor:pointer;text-align:left;font-family:inherit;color:inherit}
+.valgkort:hover{border-color:var(--c1)}
+.valgkort .t{font-weight:800;font-size:15px;margin-bottom:3px}
+.valgkort .b{font-size:12.5px;color:var(--ink2)}
+footer{margin-top:36px;color:var(--ink3);font-size:12px;line-height:1.65;
+  border-top:1px solid var(--kant);padding-top:16px}
+footer a{color:var(--c1)}
+</style>
+</head>
+<body>
+<div class="side">
+
+<div class="topp">
+  <div class="merke"><div class="logo"></div><h1>Renteradar</h1></div>
+  <button class="ikonknapp" id="temaKnapp" onclick="byttTema()">Mørkt</button>
+</div>
+<p class="undertittel">Regn på boliglån, deleie og leie i samme verktøy.
+Alt regnes i nettleseren — ingenting sendes noe sted.</p>
+
+<div id="velkomst"></div>
+<div id="app" style="display:none">
+
+  <div class="faner" id="faner"></div>
+
+  <div class="hero">
+    <div class="l" id="heroLabel">Ut av konto per måned</div>
+    <div class="v" id="heroTall">—</div>
+    <div class="diff" id="heroDiff"></div>
+    <div class="stabel" id="stabel"></div>
+    <div class="tegn" id="tegn"></div>
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <h2>Dra i spakene</h2>
+  <div class="spak">
+    <div class="rad"><span class="navn" id="n_rente">Rente</span><span class="verdi" id="v_rente"></span></div>
+    <input type="range" id="s_rente" min="1" max="10" step="0.01" value="5">
+    <div class="folge" id="f_rente"></div>
+  </div>
+  <div class="spak">
+    <div class="rad"><span class="navn">Boligmarkedet siden kjøp</span><span class="verdi" id="v_marked"></span></div>
+    <input type="range" id="s_marked" min="-25" max="25" step="0.5" value="0">
+    <div class="folge" id="f_marked"></div>
+  </div>
+  <div class="spak" id="spakAndel">
+    <div class="rad"><span class="navn">Eierandel</span><span class="verdi" id="v_andel"></span></div>
+    <input type="range" id="s_andel" min="10" max="100" step="5" value="50">
+    <div class="folge" id="f_andel"></div>
+  </div>
+
+  <h2>Nøkkeltall</h2>
+  <div class="rutenett" id="resultater"></div>
+
+  <h2>Over tid</h2>
+  <div class="kort">
+    <b style="font-size:14.5px">Gjeld mot egenkapital</b>
+    <div class="status" id="nedbetalingHint"></div>
+    <svg class="graf" id="grafNed" height="200"></svg>
+    <div class="tegn" id="tegnNed" style="margin-top:8px"></div>
+  </div>
+
+  <details>
+    <summary>Månedskostnaden, krone for krone</summary>
+    <div class="innhold"><div class="rull"><table id="mndTabell"></table></div></div>
+  </details>
+  <details>
+    <summary>Rediger beregningen</summary>
+    <div class="innhold" id="fakta"></div>
+  </details>
+  <details>
+    <summary>Sammenlign alle beregningene</summary>
+    <div class="innhold"><div class="rull"><table id="sammenlign"></table></div>
+      <p class="status" style="margin-top:10px">Rente og marked fra spakene gjelder alle.
+      Grønn rad har lavest sum ut av konto.</p></div>
+  </details>
+
+  <h2>Styringsrenten fra Norges Bank</h2>
+  <div class="kort">
+    <div class="chips" id="nbPeriode"></div>
+    <div class="rutenett" id="nbStat" style="margin-bottom:12px"></div>
+    <svg class="graf" id="grafNB" height="230"></svg>
+    <div class="tegn" id="tegnNB" style="margin-top:8px"></div>
+    <div id="nbMoter"></div>
+    <div class="knapperad">
+      <button class="knapp sek" id="hentKnapp" onclick="hentNB()">Oppdater</button>
+      <span class="status" id="hentStatus">Henter …</span>
+    </div>
+  </div>
+
+  <div class="kort">
+    <b style="font-size:14.5px">Hva du ville betalt gjennom rentehistorien</b>
+    <div class="status" id="histHint">Din kostnad hvis renta hadde fulgt styringsrenta med dagens påslag.</div>
+    <svg class="graf" id="grafHist" height="190"></svg>
+    <div class="tegn" id="tegnHist" style="margin-top:8px"></div>
+  </div>
+
+  <details><summary>Påslag og framskrivning</summary>
+    <div class="innhold" id="nbPaaslag"></div></details>
+  <details><summary>Markedets egen dom</summary>
+    <div class="innhold" id="nbMarked"></div></details>
+  <details><summary>Alle renteendringer</summary>
+    <div class="innhold"><div class="rull"><table id="nbEndringer"></table></div></div></details>
+
+  <h2>Renter i markedet</h2>
+  <div class="kort">
+    <input class="sok" id="q_bank" placeholder="Søk bank eller vilkår …">
+    <div class="chips" id="bankKat"></div>
+    <p class="status" id="bankAntall" style="margin:0 0 8px"></p>
+    <div class="rull"><table id="bankTabell"></table></div>
+    <div class="knapperad" id="bankMer"></div>
+    <p class="status" id="bankKilde" style="margin-top:10px"></p>
+  </div>
+
+</div>
+
+<footer>
+Renteradar er en kalkulator, ikke rådgivning. Tall om en konkret bolig må bekreftes mot
+prospekt, selger og bank.<br>
+Live styringsrente: <a href="https://data.norges-bank.no" target="_blank" rel="noopener">Norges Bank åpne data</a> (NLOD).
+Beregningene dine lagres kun i denne nettleseren.
+</footer>
+</div>
+<div id="tt"></div>
+
+<script>
+'use strict';
+/* ═════════ 0 · verktøy ═════════ */
+const $=id=>document.getElementById(id);
+const kr=n=>Math.round(n).toLocaleString('no-NO')+' kr';
+const tall=n=>Math.round(n).toLocaleString('no-NO');
+const pst=n=>n.toLocaleString('no-NO',{minimumFractionDigits:2,maximumFractionDigits:2})+' %';
+const pp=v=>(v>0?'+':'')+v.toLocaleString('no-NO',{minimumFractionDigits:2})+' pp';
+const num=v=>parseFloat(String(v).replace(/\s/g,'').replace(',','.'))||0;
+const dato=d=>new Date(d).toLocaleDateString('no-NO',{day:'numeric',month:'short',year:'numeric'});
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const farge=v=>v>0?'var(--varsel)':(v<0?'var(--god)':'var(--ink)');
+const Lager={
+  les(k){ try{ const r=localStorage.getItem(k); return r?JSON.parse(r):null; }catch(e){ return null; } },
+  skriv(k,d){ try{ localStorage.setItem(k,JSON.stringify(d)); }catch(e){} }
+};
+
+/* ═════════ 1 · tema ═════════ */
+function settTema(t){
+  document.documentElement.dataset.tema=t;
+  $('temaKnapp').textContent = t==='lys'?'Mørkt':'Lyst';
+  Lager.skriv('rr_tema',t);
+  if(S && S.liste && S.liste.length) tegnAlt();
+}
+function byttTema(){ settTema(document.documentElement.dataset.tema==='lys'?'mork':'lys'); }
+
+/* ═════════ 2 · maler (nøytrale eksempeltall) ═════════ */
+const MAL={
+  boliglaan:{type:'boliglaan',navn:'Boligkjøp',pris:4000000,ek:600000,fellesutg:3500,
+    aar:30,omk:100000,lonn:600000,rente:5.20,laan:[]},
+  deleie:{type:'deleie',navn:'Deleie',inn:1600000,fg:2400000,drift:3000,avdrag:2500,
+    leie50:7000,omk:20000,lonn:600000,rente:5.00,andel:50,laan:[]},
+  leie:{type:'leie',navn:'Leie',husleie:12000,strom:1200,lonn:600000,rente:5.00,laan:[]}
+};
+const TYPENAVN={boliglaan:'Boligkjøp',deleie:'Deleie',leie:'Leie'};
+const FELT={
+  boliglaan:[['pris','Kjøpesum (kr)'],['ek','Egenkapital (kr)'],['fellesutg','Felleskostnader (kr/mnd)'],
+    ['aar','Nedbetalingstid (år)'],['omk','Omkostninger (kr)'],['lonn','Brutto årsinntekt (kr)']],
+  deleie:[['inn','Innskudd, hele boligen (kr)'],['fg','Fellesgjeld, hele boligen (kr)'],
+    ['drift','Drift, hele boligen (kr/mnd)'],['avdrag','Avdrag fellesgjeld, hele boligen (kr/mnd)'],
+    ['leie50','Leie ved 50 % eierandel (kr/mnd)'],['omk','Omkostninger, din andel (kr)'],
+    ['lonn','Brutto årsinntekt (kr)']],
+  leie:[['husleie','Husleie (kr/mnd)'],['strom','Strøm og annet (kr/mnd)'],['lonn','Brutto årsinntekt (kr)']]
+};
+
+/* ═════════ 3 · bankrenter ═════════ */
+let BANKER=[
+["Marker & Eidsberg Sparebank",4.95,5.10,"ung","ung, inntil 85 % belåning"],
+["Ørskog Sparebank",4.95,5.14,"ung","under 34 år"],
+["SpareBank 1 Sogn og Fjordane",4.95,5.12,"fast","fastrente 10 år"],
+["Nybygger.no (Sparebanken Øst)",4.96,5.07,"vanlig","inntil 60 % belåning"],
+["Heder Bank",4.97,5.08,"vanlig","inntil 60 % belåning"],
+["Landkreditt Bank",4.98,5.10,"vanlig","inntil 60 % belåning"],
+["DNB Vennelån",4.99,5.15,"ung","ung, inntil 85 % belåning"],
+["Oslo Pensjonsforsikring",5.00,5.12,"vanlig","inntil 60 % belåning"],
+["Penni (Eika digitalbank)",5.00,5.12,"vanlig","inntil 60 % belåning"],
+["Tinde Sparebank",5.00,5.18,"ung","under 34 år"],
+["Landkreditt Bank",5.00,5.12,"ramme","rammelån inntil 50 %"],
+["Himla Bank",5.01,5.13,"vanlig","inntil 75 % belåning"],
+["DinBank",5.02,5.14,"vanlig","inntil 60 % belåning"],
+["Landkreditt Bank",5.02,5.14,"ung","under 34 år"],
+["Landkreditt Bank",5.02,5.14,"vanlig","inntil 75 % belåning"],
+["DinBank",5.03,5.15,"vanlig","inntil 65 % belåning"],
+["NORDirektebank",5.05,5.20,"ramme","rammelån inntil 60 %"],
+["SpareBank 1 Sogn og Fjordane",5.05,5.22,"fast","fastrente 5 år"],
+["Haltdalen Sparebank",5.10,5.28,"ung","under 34 år"],
+["Sogn Sparebank",5.14,5.32,"ung","18–34 år"],
+["SpareBank 1 Lom og Skjåk",5.15,5.32,"ung","under 34 år"],
+["Tolga-Os Sparebank",5.15,5.33,"ung","under 34 år"],
+["SpareBank 1 Sogn og Fjordane",5.15,5.33,"fast","fastrente 3 år"],
+["SpareBank 1 Hallingdal Valdres",5.15,5.34,"ung","18–34 år"],
+["SpareBank 1 Ringerike Hadeland",5.19,5.36,"ung","under 34 år"],
+["Landkreditt Bank",5.19,5.32,"ramme","rammelån inntil 60 %"],
+["Fana Sparebank",5.20,5.33,"ung","under 34 år"],
+["KLP Banken",5.20,5.37,"fast","fastrente 10 år"],
+["Sparebanken Norge",5.25,5.43,"fast","fastrente 10 år"],
+["Bulder Bank",5.27,5.40,"ramme","rammelån inntil 50 %"],
+["SpareBank 1 SMN",5.29,5.44,"ramme","fleksilån inntil 60 %"],
+["Sparebanken Øst",5.29,5.48,"fast","fastrente 10 år"],
+["SpareBank 1 Gudbrandsdal",5.30,5.47,"fast","fastrente 10 år"],
+["Bulder Bank",5.32,5.45,"ramme","rammelån inntil 55 %"],
+["SpareBank 1 Gudbrandsdal",5.35,5.52,"fast","fastrente 5 år"],
+["Bulder Bank",5.37,5.50,"ramme","rammelån inntil 60 %"],
+["Sparebanken Norge",5.84,6.05,"vanlig","inntil 75 % belåning"]
+];
+const KATEGORIER=[['alle','Alle'],['vanlig','Vanlig'],['ung','Ung'],['fast','Fastrente'],['ramme','Rammelån']];
+let bankFilter={q:'',kat:'alle',vis:8};
+let MARKED={kilde:'øyeblikksbilde 15.08.2026, Finansportalen'};
+
+/* ═════════ 4 · tilstand ═════════ */
+let S = Lager.les('rr_data') || {aktiv:0,liste:[]};
+if(!Array.isArray(S.liste)) S={aktiv:0,liste:[]};
+S.liste.forEach(b=>{ if(!Array.isArray(b.laan)) b.laan=[]; });
+if(S.aktiv>=S.liste.length) S.aktiv=0;
+const A=()=>S.liste[S.aktiv];
+const lagre=()=>Lager.skriv('rr_data',S);
+var serie=null, nbPeriode=5;
+
+/* ═════════ 5 · kjernen ═════════ */
+function regn(b,rente,marked,andel){
+  const lonn=num(b.lonn);
+  const laan=(b.laan||[]).map(l=>{
+    const bel=num(l.belop), r=num(l.rente)/100/12, n=Math.max(num(l.aar),0.5)*12;
+    const term=r>0? bel*r/(1-Math.pow(1+r,-n)) : bel/n;
+    return {navn:l.navn||'Lån',belop:bel,rente:num(l.rente),aar:num(l.aar),
+            renteDel:bel*r,avdrag:term-bel*r,term};
+  }).filter(l=>l.belop>0);
+  const lSum=laan.reduce((s,l)=>s+l.belop,0);
+  const lTerm=laan.reduce((s,l)=>s+l.term,0);
+  const lRente=laan.reduce((s,l)=>s+l.renteDel,0);
+  let bo=0,ut=0,bo6=0,deler=[],gjeld=0,formue=0,verdi=0,ekstra={};
+
+  if(b.type==='deleie'){
+    const a=andel/100, inn0=num(b.inn), fg=num(b.fg), total0=inn0+fg;
+    verdi=total0*(1+marked/100);
+    const innNaa=Math.max(verdi-fg,0);
+    const leie=num(b.leie50)*2*(1-a);
+    const renteDel=rente/100*fg/12*a, drift=num(b.drift)*a, avdrag=num(b.avdrag)*a;
+    bo=renteDel+drift+leie+lRente; bo6=bo+avdrag; ut=renteDel+drift+leie+lTerm;
+    deler=[['Renter',renteDel,'var(--c1)'],['Drift',drift,'var(--c2)'],
+           ['Leie',leie,'var(--c3)'],['Egne lån',lTerm,'var(--c5)']];
+    gjeld=fg*a+lSum; formue=innNaa*a-lSum;
+    const gulv=Math.max(innNaa,inn0);
+    ekstra={renteDel,drift,avdrag,leie,innNaa,gulvAktiv:innNaa<inn0,
+      steg:a<1?gulv*0.10:0,opptrapp:Math.max(a-0.5,0)*gulv,
+      kontanter:inn0*a+num(b.omk)-lSum,
+      kontantTekst:`${tall(inn0*a)} innskudd + ${tall(num(b.omk))} omk − ${tall(lSum)} lån`,
+      hovedGjeld:fg*a,hovedAar:30,hovedAvdrag:avdrag};
+  }
+  else if(b.type==='boliglaan'){
+    verdi=num(b.pris)*(1+marked/100);
+    const hoved=Math.max(num(b.pris)-num(b.ek)-lSum,0);
+    const n=Math.max(num(b.aar),1)*12, i=rente/100/12;
+    const term=i>0? hoved*i/(1-Math.pow(1+i,-n)) : hoved/n;
+    const renteDel=hoved*i, avdrag=term-renteDel, fellesutg=num(b.fellesutg);
+    bo=renteDel+fellesutg+lRente; bo6=bo; ut=term+fellesutg+lTerm;
+    deler=[['Renter',renteDel,'var(--c1)'],['Avdrag',avdrag,'var(--c2)'],
+           ['Felleskost',fellesutg,'var(--c3)'],['Egne lån',lTerm,'var(--c5)']];
+    gjeld=hoved+lSum; formue=verdi-hoved-lSum;
+    ekstra={renteDel,avdrag,term,fellesutg,hoved,
+      belaaning:num(b.pris)>0?(hoved+lSum)/num(b.pris)*100:0,
+      kontanter:num(b.ek)+num(b.omk),
+      kontantTekst:`${tall(num(b.ek))} egenkapital + ${tall(num(b.omk))} omkostninger`,
+      hovedGjeld:hoved,hovedAar:num(b.aar),hovedTerm:term};
+  }
+  else{
+    bo=num(b.husleie)+num(b.strom)+lRente; bo6=bo;
+    ut=num(b.husleie)+num(b.strom)+lTerm;
+    deler=[['Husleie',num(b.husleie),'var(--c1)'],['Strøm og annet',num(b.strom),'var(--c3)'],
+           ['Egne lån',lTerm,'var(--c5)']];
+    gjeld=lSum; formue=-lSum; ekstra={kontanter:null};
+  }
+  return {bo,bo6,ut,deler:deler.filter(d=>d[1]>0.5),gjeld,tak:lonn*5,
+          grad:lonn>0?gjeld/lonn:0,formue,verdi,laanListe:laan,lSum,lTerm,lRente,...ekstra};
+}
+
+function forlop(b,rente,marked,andel){
+  if(b.type==='leie') return null;
+  const m=regn(b,rente,marked,andel);
+  const aar=Math.max(Math.round(m.hovedAar||30),1), i=rente/100/12;
+  let g=m.hovedGjeld||0;
+  const egne=(b.laan||[]).map(l=>({b:num(l.belop),r:num(l.rente)/100/12,n:Math.max(num(l.aar),0.5)*12}));
+  const minVerdi=b.type==='deleie'? m.verdi*andel/100 - (num(b.fg)*andel/100) + (num(b.fg)*andel/100) : m.verdi;
+  const rader=[];
+  for(let y=0;y<=aar;y++){
+    const egneRest=egne.reduce((s,l)=>{
+      const mnd=y*12; if(mnd>=l.n) return s;
+      if(l.r===0) return s+l.b*(1-mnd/l.n);
+      const t=l.b*l.r/(1-Math.pow(1+l.r,-l.n));
+      return s+Math.max(l.b*Math.pow(1+l.r,mnd)-t*(Math.pow(1+l.r,mnd)-1)/l.r,0);
+    },0);
+    const gj=Math.max(g,0)+egneRest;
+    const eiendel=b.type==='deleie'? m.verdi*(andel/100) : m.verdi;
+    rader.push({aar:y,gjeld:gj,formue:eiendel-gj});
+    if(b.type==='boliglaan'){ const t=m.hovedTerm||0;
+      for(let k=0;k<12&&g>0;k++) g=g*(1+i)-t; }
+    else g=Math.max(g-(m.hovedAvdrag||0)*12,0);
+  }
+  return rader;
+}
+
+/* ═════════ 6 · gjenbrukbar linjegraf ═════════ */
+function linjegraf(svgId,opt){
+  const svg=$(svgId); if(!svg) return;
+  const W=svg.clientWidth||600, H=+svg.getAttribute('height')||200;
+  const P={t:14,r:16,b:26,l:opt.venstre||42};
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const alleP=opt.serier.flatMap(s=>s.punkter);
+  if(alleP.length<2){ svg.innerHTML=''; return; }
+  const xs=alleP.map(p=>p.x), ys=alleP.map(p=>p.y).concat(opt.ekstraY||[]);
+  const x0=Math.min(...xs), x1=Math.max(...xs);
+  let rå0=Math.min(...ys), rå1=Math.max(...ys);
+  const pad=(rå1-rå0)*0.10||0.5; rå0-=pad; rå1+=pad;
+  if(opt.nullBunn && rå0<0 && Math.min(...ys)>=0) rå0=0;
+  // pene akseverdier: rund steget til 1/2/2,5/5 × tierpotens
+  const grovt=(rå1-rå0)/4 || 1;
+  const pot=Math.pow(10,Math.floor(Math.log10(Math.abs(grovt))));
+  const steg=[1,2,2.5,5,10].map(f=>f*pot).find(f=>f>=grovt) || 10*pot;
+  let y0=Math.floor(rå0/steg)*steg;
+  const y1=Math.ceil(rå1/steg)*steg;
+  if(opt.ikkeUnder!=null && Math.min(...ys)>=opt.ikkeUnder) y0=Math.max(y0,opt.ikkeUnder);
+  const X=v=>P.l+(W-P.l-P.r)*(x1===x0?0.5:(v-x0)/(x1-x0));
+  const Y=v=>P.t+(H-P.t-P.b)*(1-(y1===y0?0.5:(v-y0)/(y1-y0)));
+  let g='';
+  for(let v=y0; v<=y1+steg*0.001; v+=steg){
+    const nullinje=Math.abs(v)<steg*1e-9;
+    g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}"
+        stroke="${nullinje?css('--kant2'):css('--kant')}" stroke-width="1"/>`+
+       `<text x="${P.l-7}" y="${(Y(v)+4).toFixed(1)}" fill="${css('--ink3')}" font-size="10"
+        text-anchor="end">${opt.yTekst(v)}</text>`;
+  }
+  (opt.xMerker||[]).forEach(mk=>{ if(mk.v<x0||mk.v>x1) return;
+    g+=`<text x="${X(mk.v).toFixed(1)}" y="${H-8}" fill="${css('--ink3')}" font-size="10"
+        text-anchor="middle">${mk.t}</text>`; });
+  (opt.linjer||[]).forEach(l=>{ if(l.y<y0||l.y>y1) return;
+    g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(l.y).toFixed(1)}" y2="${Y(l.y).toFixed(1)}"
+        stroke="${l.farge}" stroke-width="1.5" stroke-dasharray="5 4"/>`; });
+  opt.serier.forEach(s=>{
+    if(s.punkter.length<2) return;
+    let d='';
+    s.punkter.forEach((p,i)=>{ const x=X(p.x).toFixed(1), y=Y(p.y).toFixed(1);
+      if(!i) d=`M${x} ${y}`;
+      else d+= s.trapp? ` L${x} ${Y(s.punkter[i-1].y).toFixed(1)} L${x} ${y}` : ` L${x} ${y}`; });
+    if(s.fyll){
+      const base=Y(Math.max(y0,0)).toFixed(1);
+      g+=`<path d="${d} L${X(s.punkter[s.punkter.length-1].x).toFixed(1)} ${base}
+           L${X(s.punkter[0].x).toFixed(1)} ${base} Z" fill="${s.farge}" opacity=".10"/>`;
+    }
+    g+=`<path d="${d}" fill="none" stroke="${s.farge}" stroke-width="2.2"
+        stroke-linejoin="round" stroke-linecap="round"
+        ${s.stiplet?'stroke-dasharray="4 4" opacity=".55"':''}/>`;
+    if(s.punktSlutt){ const p=s.punkter[s.punkter.length-1];
+      g+=`<circle cx="${X(p.x).toFixed(1)}" cy="${Y(p.y).toFixed(1)}" r="4"
+          fill="${s.farge}" stroke="${css('--flate')}" stroke-width="2"/>`; }
+  });
+  g+=`<line id="${svgId}_k" y1="${P.t}" y2="${H-P.b}" stroke="${css('--kant2')}"
+      stroke-width="1" style="display:none"/>`;
+  svg.innerHTML=g;
+  if(opt.hover){
+    const kryss=svg.querySelector('#'+svgId+'_k'), tt=$('tt');
+    const flytt=ev=>{
+      const kl=ev.touches?ev.touches[0]:ev, b=svg.getBoundingClientRect();
+      const xv=x0+(x1-x0)*(((kl.clientX-b.left)*(W/b.width))-P.l)/(W-P.l-P.r);
+      const t=opt.hover(Math.max(x0,Math.min(x1,xv))); if(!t) return;
+      kryss.style.display='block'; kryss.setAttribute('x1',X(t.x)); kryss.setAttribute('x2',X(t.x));
+      tt.style.display='block';
+      tt.style.left=Math.min(kl.clientX+14,innerWidth-165)+'px';
+      tt.style.top=Math.max(8,kl.clientY-54)+'px';
+      tt.innerHTML=t.html;
+    };
+    svg.onmousemove=flytt; svg.ontouchmove=flytt;
+    svg.onmouseleave=svg.ontouchend=()=>{ tt.style.display='none'; kryss.style.display='none'; };
+  }
+}
+
+/* ═════════ 7 · beregninger ═════════ */
+/* Typevelgeren vises når lista er tom ELLER når du selv ber om den med «+ ny».
+   Før lå den bak en fritekst-prompt, som gjorde at du satt fast i den typen du
+   først valgte — nå er det de samme tre kortene, med Avbryt når du har noe fra før. */
+let visVelger=false;
+function tegnVelkomst(){
+  const tom=!S.liste.length;
+  const vis=tom||visVelger;
+  $('velkomst').style.display=vis?'':'none';
+  $('app').style.display=vis?'none':'';
+  if(!vis){ $('velkomst').innerHTML=''; return; }
+  $('velkomst').innerHTML=`<div class="kort">
+    <b style="font-size:17px">Hva vil du regne på?</b>
+    <p style="color:var(--ink2);font-size:14px;margin:6px 0 0">
+      ${tom?'Verktøyet starter tomt. Velg en type, så fylles det inn eksempeltall du bytter ut med dine egne.'
+           :'Velg type for den nye beregningen. Den du står i nå blir liggende som egen fane.'}</p>
+    <div class="valg">
+      <button class="valgkort" onclick="nyType('boliglaan')"><div class="t">Boligkjøp</div>
+        <div class="b">Vanlig kjøp med boliglån. Renter, avdrag og belåningsgrad.</div></button>
+      <button class="valgkort" onclick="nyType('deleie')"><div class="t">Deleie</div>
+        <div class="b">Du eier en andel og leier resten. Fellesgjeld og opptrapping.</div></button>
+      <button class="valgkort" onclick="nyType('leie')"><div class="t">Leie</div>
+        <div class="b">Nullpunktet å måle de andre mot.</div></button>
+    </div>
+    ${tom?'':`<div style="margin-top:12px"><button class="knapp sek" onclick="avbrytVelger()">Avbryt</button></div>`}
+    </div>`;
+}
+function nyType(t){
+  const n=prompt('Navn på beregningen',TYPENAVN[t]); if(n===null) return;
+  S.liste.push(JSON.parse(JSON.stringify({...MAL[t],navn:n||TYPENAVN[t]})));
+  S.aktiv=S.liste.length-1; visVelger=false; lagre(); tegnVelkomst(); settSpaker(); tegnAlt();
+}
+function nyBeregning(){ visVelger=true; tegnVelkomst(); }
+function avbrytVelger(){ visVelger=false; tegnVelkomst(); settSpaker(); tegnAlt(); }
+/* Bytter type på beregningen du står i, uten å lage en ny fane. Navn og lån følger med;
+   de typespesifikke feltene (innskudd/fellesgjeld/leie …) settes til malens eksempeltall,
+   siden de ikke betyr det samme på tvers av typene. */
+function byttType(){
+  const b=A(); if(!b) return;
+  const rekke=['boliglaan','deleie','leie'];
+  const valg=prompt('Bytt til hvilken type?\n1 = Boligkjøp\n2 = Deleie\n3 = Leie',
+    String(rekke.indexOf(b.type)+1));
+  if(valg===null) return;
+  const t=rekke[(parseInt(valg,10)||0)-1];
+  if(!t||t===b.type) return;
+  S.liste[S.aktiv]={...JSON.parse(JSON.stringify(MAL[t])), navn:b.navn, laan:b.laan||[], lonn:b.lonn};
+  lagre(); settSpaker(); tegnAlt();
+}
+function velg(i){ S.aktiv=i; lagre(); settSpaker(); tegnAlt(); }
+function dupliser(){ S.liste.push(JSON.parse(JSON.stringify({...A(),navn:A().navn+' (kopi)'})));
+  S.aktiv=S.liste.length-1; lagre(); tegnAlt(); }
+function slettBeregning(){ if(!confirm('Slette «'+A().navn+'»?')) return;
+  S.liste.splice(S.aktiv,1); S.aktiv=0; lagre(); tegnVelkomst();
+  if(S.liste.length){ settSpaker(); tegnAlt(); } }
+function nyttLaan(){ A().laan.push({navn:'Nytt lån',belop:0,rente:5,aar:25}); lagre(); tegnAlt(); }
+function slettLaan(j){ A().laan.splice(j,1); lagre(); tegnAlt(); }
+function settSpaker(){ const b=A(); if(!b) return;
+  $('s_rente').value=b.rente||5; $('s_marked').value=0; $('s_andel').value=b.andel||100; oppdaterSpor(); }
+const spak=()=>({rente:+$('s_rente').value,marked:+$('s_marked').value,andel:+$('s_andel').value});
+function oppdaterSpor(){ document.querySelectorAll('input[type=range]').forEach(el=>
+  el.style.setProperty('--p',(el.value-el.min)/(el.max-el.min)*100+'%')); }
+function settScen(r,mk,a){ $('s_rente').value=r; $('s_marked').value=mk;
+  if(a!=null&&a!=='null') $('s_andel').value=a; oppdaterSpor(); tegnAlt(); }
+function settRente(r){ $('s_rente').value=r; oppdaterSpor(); tegnAlt(); }
+
+function tegnAlt(){
+  if(!S.liste.length){ tegnVelkomst(); return; }
+  const b=A(), s=spak(), erDel=b.type==='deleie';
+  $('spakAndel').style.display=erDel?'':'none';
+  $('n_rente').textContent=erDel?'Fellesgjeldsrente':(b.type==='leie'?'Rente på egne lån':'Lånerente');
+  const m=regn(b,s.rente,s.marked,s.andel), base=regn(b,b.rente,0,b.andel||100);
+
+  $('faner').innerHTML=S.liste.map((x,i)=>
+    `<button class="fane${i===S.aktiv?' på':''}" onclick="velg(${i})">${x.navn}</button>`).join('')
+    +`<button class="fane ny" onclick="nyBeregning()">+ ny</button>`;
+  $('heroLabel').textContent='Ut av konto per måned · '+b.navn;
+  $('heroTall').innerHTML=tall(m.ut)+' <small>kr</small>';
+  const d=m.ut-base.ut;
+  $('heroDiff').textContent=Math.abs(d)<1?'':`${d>0?'+':'−'}${tall(Math.abs(d))} kr mot utgangspunktet`;
+  $('heroDiff').style.color=farge(d);
+  $('stabel').innerHTML=m.deler.map(x=>`<div style="flex:${x[1]};background:${x[2]}"></div>`).join('');
+  $('tegn').innerHTML=m.deler.map(x=>
+    `<span><span class="prikk" style="background:${x[2]}"></span>${x[0]} <b>${tall(x[1])}</b></span>`).join('');
+
+  const scen=erDel
+    ?[['Utgangspunkt',b.rente,0,b.andel],['Rente +2 pp',b.rente+2,0,b.andel],
+      ['Marked −10 %',b.rente,-10,b.andel],['Eier 100 %',b.rente,0,100]]
+    :[['Utgangspunkt',b.rente,0,null],['Rente +2 pp',b.rente+2,0,null],
+      ['Marked −10 %',b.rente,-10,null],['Marked +10 %',b.rente,10,null]];
+  $('chips').innerHTML=scen.map(sc=>{
+    const på=Math.abs(sc[1]-s.rente)<.01&&Math.abs(sc[2]-s.marked)<.01&&(sc[3]==null||sc[3]===s.andel);
+    return `<button class="chip${på?' på':''}" onclick="settScen(${sc[1]},${sc[2]},${sc[3]})">${sc[0]}</button>`;
+  }).join('');
+
+  $('v_rente').textContent=pst(s.rente);
+  const dr=m.ut-regn(b,b.rente,s.marked,s.andel).ut;
+  $('f_rente').innerHTML=Math.abs(dr)<1?'Utgangspunktet for denne beregningen'
+    :`Renta alene: <b>${dr>0?'+':'−'}${tall(Math.abs(dr))} kr/mnd</b>`;
+  $('v_marked').textContent=(s.marked>0?'+':'')+s.marked.toLocaleString('no-NO')+' %';
+  const df=m.formue-regn(b,s.rente,0,s.andel).formue;
+  $('f_marked').innerHTML=b.type==='leie'?'Påvirker deg ikke — du eier ingenting'
+    :(Math.abs(df)<1?'Verdien står der du kjøpte den'
+     :`Egenkapitalen din: <b>${df>0?'+':'−'}${tall(Math.abs(df))} kr</b>`
+      +(m.gulvAktiv?' — et prisgulv kan gjøre at opptrapping ikke blir billigere':''));
+  $('v_andel').textContent=s.andel+' %';
+  $('f_andel').innerHTML=!erDel?'':(s.andel<=(b.andel||50)?'Utgangspunktet'
+    :`Å komme hit koster <b>${tall(m.opptrapp)} kr</b> kontant. Leia er nå ${tall(m.leie)} kr`);
+
+  const over=m.grad>5;
+  let k=`<div class="res"><div class="l">Bokostnad</div><div class="v">${tall(m.bo)}</div>
+    <div class="d">renter og utgifter, uten avdrag</div></div>`;
+  if(erDel) k+=`<div class="res"><div class="l">Med avdrag</div><div class="v">${tall(m.bo6)}</div>
+    <div class="d">+${tall(m.avdrag)} kr sparing</div></div>`;
+  else if(b.type==='boliglaan') k+=`<div class="res"><div class="l">Belåningsgrad</div>
+    <div class="v">${m.belaaning.toLocaleString('no-NO',{maximumFractionDigits:1})} %</div>
+    <div class="d">grense: 90 %</div>
+    <span class="merkelapp ${m.belaaning>90?'kritisk':'god'}">${m.belaaning>90?'over grensen':'innenfor'}</span></div>`;
+  k+=`<div class="res"><div class="l">Egenkapital</div><div class="v">${tall(m.formue)}</div>
+    <div class="d">verdien av din del minus all gjeld</div></div>`;
+  if(m.kontanter!=null) k+=`<div class="res"><div class="l">Kontanter ved kjøp</div>
+    <div class="v">${tall(m.kontanter)}</div><div class="d">${m.kontantTekst}</div></div>`;
+  if(erDel&&m.steg) k+=`<div class="res"><div class="l">Neste 10 %-steg</div>
+    <div class="v">${tall(m.steg)}</div><div class="d">kr kontant</div></div>`;
+  k+=`<div class="res"><div class="l">Gjeldsgrad</div>
+    <div class="v">${m.grad.toLocaleString('no-NO',{maximumFractionDigits:1})}×</div>
+    <div class="d">tak: 5 × årsinntekt</div>
+    <span class="merkelapp ${over?'kritisk':'god'}">${over?'over taket':'innenfor'}</span></div>
+    <div class="res"><div class="l">Samlet gjeld</div><div class="v">${tall(m.gjeld)}</div>
+    <div class="d">${m.lSum>0?'inkl. egne lån':'boliggjeld'}</div></div>`;
+  $('resultater').innerHTML=k;
+
+  tegnNedbetaling(b,s);
+
+  let r='';
+  if(erDel) r=`<tr><td>Renter på din fellesgjeld</td><td>${kr(m.renteDel)}</td></tr>
+    <tr><td>Drift, din del</td><td>${kr(m.drift)}</td></tr>
+    <tr><td>Leie</td><td>${kr(m.leie)}</td></tr>
+    <tr><td>Avdrag fellesgjeld (sparing)</td><td>${kr(m.avdrag)}</td></tr>`;
+  else if(b.type==='boliglaan') r=`<tr><td>Renter</td><td>${kr(m.renteDel)}</td></tr>
+    <tr><td>Avdrag (sparing)</td><td>${kr(m.avdrag)}</td></tr>
+    <tr><td>Felleskostnader</td><td>${kr(m.fellesutg)}</td></tr>`;
+  else r=`<tr><td>Husleie</td><td>${kr(num(b.husleie))}</td></tr>
+    <tr><td>Strøm og annet</td><td>${kr(num(b.strom))}</td></tr>`;
+  $('mndTabell').innerHTML='<tr><th>Post</th><th>kr/mnd</th></tr>'+r+
+    m.laanListe.map(l=>`<tr><td>${l.navn} — ${pst(l.rente)}</td><td>${kr(l.term)}</td></tr>`).join('')+
+    `<tr class="sum"><td>Ut av konto</td><td>${kr(m.ut)}</td></tr>`;
+
+  tegnRediger(b);
+
+  let sam='<tr><th>Beregning</th><th>Ut/mnd</th><th>Bokostnad</th><th>Egenkapital</th><th>Gjeldsgrad</th></tr>';
+  const alle=S.liste.map((x,i)=>({n:x.navn,
+    r:regn(x,s.rente,s.marked,x.type!=='deleie'?100:(i===S.aktiv?s.andel:(x.andel||50)))}));
+  const lav=Math.min(...alle.map(x=>x.r.ut));
+  alle.forEach(x=>{ sam+=`<tr class="${x.r.ut===lav?'best':''}"><td>${x.n}</td><td>${kr(x.r.ut)}</td>
+    <td>${kr(x.r.bo)}</td><td>${tall(x.r.formue)}</td>
+    <td>${x.r.grad.toLocaleString('no-NO',{maximumFractionDigits:1})}×</td></tr>`; });
+  $('sammenlign').innerHTML=sam;
+
+  tegnBanker();
+  if(serie) tegnNB();
+}
+
+function tegnNedbetaling(b,s){
+  const f=forlop(b,s.rente,s.marked,s.andel);
+  if(!f){ $('grafNed').innerHTML=''; $('tegnNed').innerHTML='';
+    $('nedbetalingHint').textContent='Leie bygger ingen egenkapital — derfor ingen kurve.'; return; }
+  const sist=f[f.length-1];
+  $('nedbetalingHint').textContent=
+    `Om ${f.length-1} år er boliggjelden nedbetalt og egenkapitalen er ${tall(sist.formue)} kr `+
+    `(ved ${s.marked>0?'+':''}${s.marked} % marked og ingen videre prisvekst).`;
+  linjegraf('grafNed',{
+    serier:[{navn:'Gjeld',farge:css('--c4'),punkter:f.map(r=>({x:r.aar,y:r.gjeld})),fyll:true},
+            {navn:'Egenkapital',farge:css('--c2'),punkter:f.map(r=>({x:r.aar,y:r.formue})),fyll:true}],
+    nullBunn:true,venstre:54,
+    yTekst:v=>Math.abs(v)>=1e6?(v/1e6).toLocaleString('no-NO',{maximumFractionDigits:1})+' M'
+             :(v===0?'0':tall(v/1000)+'k'),
+    xMerker:f.filter(r=>r.aar%5===0).map(r=>({v:r.aar,t:'år '+r.aar})),
+    hover:xv=>{ const r=f[Math.max(0,Math.min(f.length-1,Math.round(xv)))];
+      return {x:r.aar,html:`<div style="font-weight:800">År ${r.aar}</div>
+        <div>Gjeld ${tall(r.gjeld)} kr</div><div>Egenkapital ${tall(r.formue)} kr</div>`}; }
+  });
+  $('tegnNed').innerHTML=`<span><span class="prikk" style="background:${css('--c4')}"></span>Gjeld</span>`+
+    `<span><span class="prikk" style="background:${css('--c2')}"></span>Egenkapital</span>`;
+}
+
+function tegnRediger(b){
+  const erDel=b.type==='deleie';
+  $('fakta').innerHTML=
+    `<div class="felt"><label>Navn</label><input id="e_navn" value="${b.navn}" style="text-align:left"></div>`+
+    `<div class="felt"><label>Utgangsrente (%)</label><input id="e_rente" value="${b.rente}"></div>`+
+    (erDel?`<div class="felt"><label>Eierandel ved kjøp (%)</label><input id="e_andel" value="${b.andel}"></div>`:'')+
+    FELT[b.type].map(f=>`<div class="felt"><label>${f[1]}</label><input id="e_${f[0]}" value="${b[f[0]]}"></div>`).join('')+
+    `<div style="font-size:13px;font-weight:800;color:var(--ink2);margin:18px 0 2px">Lån</div>`+
+    `<p class="status" style="margin:0 0 8px">Boliglån, familielån, byggelån — hva som helst. Sett renta selv.</p>`+
+    (b.laan||[]).map((l,j)=>`<div style="background:var(--flate2);border:1px solid var(--kant);
+        border-radius:12px;padding:10px 13px;margin:8px 0">
+      <div class="felt"><label>Navn</label><input id="L${j}_navn" value="${l.navn}" style="text-align:left"></div>
+      <div class="felt"><label>Beløp (kr)</label><input id="L${j}_belop" value="${l.belop}"></div>
+      <div class="felt"><label>Rente (%)</label><input id="L${j}_rente" value="${l.rente}"></div>
+      <div class="felt"><label>Nedbetalingstid (år)</label><input id="L${j}_aar" value="${l.aar}"></div>
+      <div class="knapperad"><button class="knapp fare mini" onclick="slettLaan(${j})">Fjern</button></div>
+    </div>`).join('')+
+    `<div class="knapperad"><button class="knapp sek" onclick="nyttLaan()">+ Legg til lån</button></div>`+
+    `<div class="knapperad" style="margin-top:18px;border-top:1px solid var(--kant);padding-top:14px">
+      <button class="knapp sek" onclick="nyBeregning()">+ Ny beregning</button>
+      <button class="knapp sek" onclick="byttType()">Bytt type</button>
+      <button class="knapp sek" onclick="dupliser()">Dupliser</button>
+      <button class="knapp fare" onclick="slettBeregning()">Slett beregningen</button></div>`;
+  $('fakta').querySelectorAll('input').forEach(el=>el.addEventListener('input',()=>{
+    if(el.id[0]==='L'){ const [j,k]=el.id.slice(1).split('_');
+      A().laan[+j][k]= k==='navn'?el.value:num(el.value); }
+    else { const k=el.id.slice(2); A()[k]= k==='navn'?el.value:num(el.value); }
+    lagre();
+    const id=el.id, pos=el.selectionStart; tegnAlt();
+    const e2=$(id); if(e2){ e2.focus(); try{e2.setSelectionRange(pos,pos)}catch(x){} }
+  }));
+}
+
+/* ═════════ 8 · bankrenter ═════════ */
+function tegnBanker(){
+  const q=bankFilter.q.toLowerCase().trim();
+  const treff=BANKER.filter(b=>(bankFilter.kat==='alle'||b[3]===bankFilter.kat)&&
+    (!q||(b[0]+' '+b[4]).toLowerCase().includes(q)));
+  const vist=treff.slice(0,bankFilter.vis);
+  $('bankKat').innerHTML=KATEGORIER.map(k=>
+    `<button class="chip${bankFilter.kat===k[0]?' på':''}" onclick="settKat('${k[0]}')">${k[1]}</button>`).join('');
+  $('bankAntall').textContent=`${treff.length} av ${BANKER.length} rentetilbud`;
+  $('bankTabell').innerHTML= vist.length
+    ? '<tr><th>Bank</th><th>Nom.</th><th>Eff.</th><th>Gjelder</th></tr>'+
+      vist.map(b=>`<tr class="klikk" onclick="settRente(${b[1]})"><td>${b[0]}</td>
+        <td>${pst(b[1])}</td><td>${pst(b[2])}</td><td style="color:var(--ink3)">${b[4]}</td></tr>`).join('')
+    : '<tr><td style="color:var(--ink3);padding:14px 6px">Ingen treff.</td></tr>';
+  $('bankMer').innerHTML= treff.length>bankFilter.vis
+    ? `<button class="knapp sek" onclick="visMer()">Vis flere — ${treff.length-bankFilter.vis} igjen</button>`
+    : (bankFilter.vis>8?`<button class="knapp sek" onclick="visFaerre()">Vis færre</button>`:'');
+  $('bankKilde').textContent=`Kilde: ${MARKED.kilde}. Trykk på en rad for å bruke renta.`;
+}
+function settKat(k){ bankFilter.kat=k; bankFilter.vis=8; tegnBanker(); }
+function visMer(){ bankFilter.vis+=8; tegnBanker(); }
+function visFaerre(){ bankFilter.vis=8; tegnBanker(); }
+
+/* ═════════ 9 · Norges Bank ═════════ */
+const MOTER=[['2026-09-24','Rentemøte']];   // kun verifiserte datoer
+const BANE=[['2026-12-31',4.50]];           // Norges Banks signaliserte bane, juni-rapporten 2026
+const PERIODER=[[1,'1 år'],[3,'3 år'],[5,'5 år'],[10,'10 år'],[99,'Alt']];
+
+async function hentNB(){
+  const st=$('hentStatus'), kn=$('hentKnapp');
+  kn.disabled=true; st.textContent='Henter …';
+  try{
+    const r=await fetch('https://data.norges-bank.no/api/data/IR/B.KPRA.SD.R?format=sdmx-json&lastNObservations=3000');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    const sd=j.data.dataSets[0].series, key=Object.keys(sd)[0], obs=sd[key].observations;
+    const tid=j.data.structure.dimensions.observation.find(x=>x.id==='TIME_PERIOD').values;
+    serie=Object.keys(obs).map(i=>({d:tid[i].id,t:new Date(tid[i].id).getTime(),
+      v:parseFloat(obs[i][0])})).filter(p=>isFinite(p.v)).sort((a,b)=>a.t-b.t);
+    if(!serie.length) throw new Error('tom serie');
+    st.textContent='Oppdatert '+new Date().toLocaleTimeString('no-NO',{hour:'2-digit',minute:'2-digit'});
+    tegnNB();
+  }catch(e){ st.textContent= serie?'Bruker forrige henting':'Fikk ikke hentet — prøv igjen på nett'; }
+  kn.disabled=false;
+}
+function settPeriode(a){ nbPeriode=a; tegnNB(); }
+function nbUtsnitt(){
+  const sis=serie[serie.length-1];
+  if(nbPeriode>=99) return serie;
+  const fra=new Date(sis.d); fra.setFullYear(fra.getFullYear()-nbPeriode);
+  const u=serie.filter(p=>p.t>=fra.getTime());
+  return u.length>1?u:serie;
+}
+function nbEndringer(u){
+  const e=[];
+  for(let i=1;i<u.length;i++) if(u[i].v!==u[i-1].v)
+    e.push({d:u[i].d,fra:u[i-1].v,til:u[i].v,endring:u[i].v-u[i-1].v});
+  return e.reverse();
+}
+function aarMerker(u){
+  const a=[]; let sa='';
+  u.forEach(p=>{ const y=p.d.slice(0,4); if(y!==sa){ sa=y; a.push({v:p.t,t:y}); } });
+  return a;
+}
+
+function tegnNB(){
+  if(!serie||!S.liste.length) return;
+  const u=nbUtsnitt(), sis=serie[serie.length-1], endr=nbEndringer(u);
+  const vs=u.map(p=>p.v), snitt=vs.reduce((a,b)=>a+b,0)/vs.length, iPer=sis.v-u[0].v;
+  const s=spak(), b=A();
+
+  $('nbPeriode').innerHTML=PERIODER.map(p=>
+    `<button class="chip${nbPeriode===p[0]?' på':''}" onclick="settPeriode(${p[0]})">${p[1]}</button>`).join('');
+  $('nbStat').innerHTML=`
+    <div class="res"><div class="l">Styringsrenten nå</div><div class="v">${pst(sis.v)}</div>
+      <div class="d">per ${dato(sis.d)}</div></div>
+    <div class="res"><div class="l">Endring i perioden</div>
+      <div class="v" style="color:${farge(iPer)}">${pp(iPer)}</div>
+      <div class="d">fra ${pst(u[0].v)} i ${dato(u[0].d)}</div></div>
+    <div class="res"><div class="l">Spenn</div>
+      <div class="v">${pst(Math.min(...vs))}–${pst(Math.max(...vs))}</div>
+      <div class="d">snitt ${pst(snitt)}</div></div>
+    <div class="res"><div class="l">Renteendringer</div><div class="v">${endr.length}</div>
+      <div class="d">${endr.filter(x=>x.endring>0).length} opp · ${endr.filter(x=>x.endring<0).length} ned</div></div>`;
+
+  linjegraf('grafNB',{
+    serier:[{navn:'Styringsrenten',farge:css('--c1'),punkter:u.map(p=>({x:p.t,y:p.v})),trapp:true,punktSlutt:true},
+            {navn:'Bane',farge:css('--c1'),stiplet:true,
+             punkter:[{x:sis.t,y:sis.v}].concat(BANE.map(x=>({x:new Date(x[0]).getTime(),y:x[1]})))}],
+    ekstraY:[s.rente], linjer:[{y:s.rente,farge:css('--c3')}], ikkeUnder:0,
+    yTekst:v=>v.toLocaleString('no-NO',{maximumFractionDigits:2})+' %',
+    xMerker:aarMerker(u),
+    hover:xv=>{ let best=u[0]; for(const p of u){ if(p.t<=xv) best=p; else break; }
+      return {x:best.t,html:`<div style="font-weight:800">${pst(best.v)}</div>
+        <div style="opacity:.75">${dato(best.d)}</div>`}; }
+  });
+  $('tegnNB').innerHTML=
+    `<span><span class="prikk" style="background:${css('--c1')}"></span>Styringsrenten</span>`+
+    `<span><span class="prikk" style="background:${css('--c1')};opacity:.55"></span>Norges Banks bane</span>`+
+    `<span><span class="prikk" style="background:${css('--c3')}"></span>Din rente ${pst(s.rente)}</span>`;
+  const komm=MOTER.filter(x=>new Date(x[0])>=new Date()).slice(0,3);
+  $('nbMoter').innerHTML=komm.length
+    ?`<p class="status" style="margin-top:10px">Neste rentemøte:
+      <b style="color:var(--ink2)">${komm.map(x=>dato(x[0])).join(' · ')}</b></p>`:'';
+
+  // din kostnad gjennom historien
+  const paaslag=s.rente-sis.v;
+  const pk=u.filter((p,i)=>i===0||i===u.length-1||p.v!==u[i-1].v)
+            .map(p=>({x:p.t,y:regn(b,p.v+paaslag,s.marked,s.andel).ut,r:p.v+paaslag,d:p.d}));
+  if(pk.length>1){
+    const ys=pk.map(p=>p.y), naa=regn(b,s.rente,s.marked,s.andel).ut;
+    $('histHint').innerHTML=`Med ditt påslag på ${pp(paaslag)} ville summen ut av konto svingt mellom
+      <b>${tall(Math.min(...ys))}</b> og <b>${tall(Math.max(...ys))} kr</b> i denne perioden. I dag: ${tall(naa)} kr.`;
+    linjegraf('grafHist',{
+      serier:[{navn:'Ut av konto',farge:css('--c5'),punkter:pk,trapp:true,fyll:true,punktSlutt:true}],
+      venstre:54,ikkeUnder:0,yTekst:v=>v===0?'0':tall(v/1000)+'k',xMerker:aarMerker(u),
+      hover:xv=>{ let best=pk[0]; for(const p of pk){ if(p.x<=xv) best=p; else break; }
+        return {x:best.x,html:`<div style="font-weight:800">${tall(best.y)} kr/mnd</div>
+          <div style="opacity:.75">${dato(best.d)} · rente ${pst(best.r)}</div>`}; }
+    });
+    $('tegnHist').innerHTML=`<span><span class="prikk" style="background:${css('--c5')}"></span>Din kostnad ved datidens rente</span>`;
+  }
+
+  $('nbPaaslag').innerHTML=`<div class="notis">
+      <b>Ditt påslag: ${pp(paaslag)}</b> <span style="color:var(--ink3)">(antakelse)</span><br>
+      Renta du regner med (${pst(s.rente)}) ligger ${Math.abs(paaslag).toLocaleString('no-NO',{minimumFractionDigits:2})} pp
+      ${paaslag>=0?'over':'under'} styringsrenta. Tabellen forutsetter at påslaget står stille — et
+      borettslags fellesgjeld kan ha egne vilkår og justeres sjeldnere. Bekreft mot prospektet.
+    </div><div class="rull"><table>
+      <tr><th>Styringsrenta</th><th>Blir</th><th>Din rente</th><th>Ut av konto</th><th></th></tr>`+
+    [0,0.25,0.5,1,-0.25,-0.5].map(x=>{
+      const ny=sis.v+x, din=ny+paaslag;
+      const ut=regn(b,din,s.marked,s.andel).ut, dd=ut-regn(b,s.rente,s.marked,s.andel).ut;
+      return `<tr><td>${x===0?'uendret':pp(x)}</td><td>${pst(ny)}</td><td><b>${pst(din)}</b></td>
+        <td>${tall(ut)} kr ${Math.abs(dd)>=1?`<span style="color:${farge(dd)}">${dd>0?'+':'−'}${tall(Math.abs(dd))}</span>`:''}</td>
+        <td><button class="knapp sek mini" onclick="settRente(${din.toFixed(2)})">bruk</button></td></tr>`;
+    }).join('')+`</table></div>`;
+
+  const flyt=BANKER.filter(x=>x[3]==='vanlig'||x[3]==='ung').map(x=>x[1]);
+  const f5=BANKER.filter(x=>x[3]==='fast'&&/5 år/.test(x[4])).map(x=>x[1]);
+  const f10=BANKER.filter(x=>x[3]==='fast'&&/10 år/.test(x[4])).map(x=>x[1]);
+  if(flyt.length&&f5.length){
+    const bf=Math.min(...flyt), b5=Math.min(...f5), b10=f10.length?Math.min(...f10):null, d5=b5-bf;
+    const dom= d5>0.35?['Markedet priser inn stigende rente','var(--varsel)']
+             : d5<-0.15?['Markedet priser inn fallende rente','var(--god)']
+             : ['Markedet priser inn omtrent uendret rente','var(--ink)'];
+    $('nbMarked').innerHTML=`<div class="notis" style="border-left-color:${dom[1]}">
+      <b style="color:${dom[1]}">${dom[0]}</b><br>
+      Billigste flytende ligger på ${pst(bf)}, billigste 5-års fastrente på ${pst(b5)} — en forskjell
+      på ${pp(d5)}. Banker tar betalt for å binde renta når de tror den skal opp; er fastrenta omtrent
+      lik flytende, venter markedet et sidelengs forløp.
+      ${b10!=null?`10-års fastrente ligger på ${pst(b10)}${b10<b5?' — lavere enn femåringen, altså forventning om kutt lenger fram.':'.'}`:''}
+    </div>`;
+  }
+
+  $('nbEndringer').innerHTML= endr.length
+    ? '<tr><th>Dato</th><th>Fra</th><th>Til</th><th>Endring</th></tr>'+
+      endr.map(e=>`<tr><td>${dato(e.d)}</td><td>${pst(e.fra)}</td><td>${pst(e.til)}</td>
+        <td style="color:${farge(e.endring)};font-weight:700">${pp(e.endring)}</td></tr>`).join('')
+    : '<tr><td style="color:var(--ink3);padding:12px 6px">Ingen endringer i perioden.</td></tr>';
+}
+
+/* ═════════ 10 · oppstart ═════════ */
+settTema(Lager.les('rr_tema') || (matchMedia('(prefers-color-scheme: dark)').matches?'mork':'lys'));
+document.querySelectorAll('input[type=range]').forEach(el=>
+  el.addEventListener('input',()=>{ oppdaterSpor(); tegnAlt(); }));
+$('q_bank').addEventListener('input',e=>{ bankFilter.q=e.target.value; bankFilter.vis=8; tegnBanker(); });
+addEventListener('resize',()=>{ if(S.liste.length) tegnAlt(); });
+oppdaterSpor(); tegnVelkomst();
+if(S.liste.length){ settSpaker(); tegnAlt(); }
+if(/^https?:$/.test(location.protocol)) hentNB();
+else $('hentStatus').textContent='Åpne over nett for å hente live tall';
+</script>
+</body>
+</html>
