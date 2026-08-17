@@ -581,7 +581,7 @@ function settScen(r,mk,a){ $('s_rente').value=r; $('s_marked').value=mk;
   if(a!=null&&a!=='null') $('s_andel').value=a; oppdaterSpor(); tegnAlt(); }
 function settRente(r){ $('s_rente').value=r; oppdaterSpor(); tegnAlt(); }
 
-function tegnAlt(){
+function tegnAlt(hoppOverRediger){
   if(!S.liste.length){ tegnVelkomst(); return; }
   const b=A(), s=spak(), erDel=b.type==='deleie';
   $('spakAndel').style.display=erDel?'':'none';
@@ -667,7 +667,7 @@ function tegnAlt(){
     m.laanListe.map(l=>`<tr><td>${l.navn} — ${pst(l.rente)}</td><td>${kr(l.term)}</td></tr>`).join('')+
     `<tr class="sum"><td>Ut av konto</td><td>${kr(m.ut)}</td></tr>`;
 
-  tegnRediger(b);
+  if(!hoppOverRediger) tegnRediger(b);
 
   let sam='<tr><th>Beregning</th><th>Ut/mnd</th><th>Bokostnad</th><th>Egenkapital</th><th>Gjeldsgrad</th></tr>';
   const alle=S.liste.map((x,i)=>({n:x.navn,
@@ -711,17 +711,17 @@ function tegnRediger(b){
     `<p class="status" style="margin:0 0 10px">Bytt ut tallene med dine egne.
       Alt over regnes om mens du skriver.</p>`+
     `<div class="felt"><label>Navn på beregningen</label><input id="e_navn" value="${b.navn}" style="text-align:left"></div>`+
-    `<div class="felt"><label>Utgangsrente (%)</label><input id="e_rente" value="${b.rente}"></div>`+
-    (erDel?`<div class="felt"><label>Eierandel ved kjøp (%)</label><input id="e_andel" value="${b.andel}"></div>`:'')+
-    FELT[b.type].map(f=>`<div class="felt"><label>${f[1]}</label><input id="e_${f[0]}" value="${b[f[0]]}"></div>`).join('')+
+    `<div class="felt"><label>Utgangsrente (%)</label><input id="e_rente" inputmode="decimal" value="${b.rente}"></div>`+
+    (erDel?`<div class="felt"><label>Eierandel ved kjøp (%)</label><input id="e_andel" inputmode="decimal" value="${b.andel}"></div>`:'')+
+    FELT[b.type].map(f=>`<div class="felt"><label>${f[1]}</label><input id="e_${f[0]}" inputmode="decimal" value="${b[f[0]]}"></div>`).join('')+
     `<div style="font-size:13px;font-weight:800;color:var(--ink2);margin:18px 0 2px">Lån</div>`+
     `<p class="status" style="margin:0 0 8px">Boliglån, familielån, byggelån — hva som helst. Sett renta selv.</p>`+
     (b.laan||[]).map((l,j)=>`<div style="background:var(--flate2);border:1px solid var(--kant);
         border-radius:12px;padding:10px 13px;margin:8px 0">
       <div class="felt"><label>Navn</label><input id="L${j}_navn" value="${l.navn}" style="text-align:left"></div>
-      <div class="felt"><label>Beløp (kr)</label><input id="L${j}_belop" value="${l.belop}"></div>
-      <div class="felt"><label>Rente (%)</label><input id="L${j}_rente" value="${l.rente}"></div>
-      <div class="felt"><label>Nedbetalingstid (år)</label><input id="L${j}_aar" value="${l.aar}"></div>
+      <div class="felt"><label>Beløp (kr)</label><input id="L${j}_belop" inputmode="decimal" value="${l.belop}"></div>
+      <div class="felt"><label>Rente (%)</label><input id="L${j}_rente" inputmode="decimal" value="${l.rente}"></div>
+      <div class="felt"><label>Nedbetalingstid (år)</label><input id="L${j}_aar" inputmode="decimal" value="${l.aar}"></div>
       <div class="knapperad"><button class="knapp fare mini" onclick="slettLaan(${j})">Fjern</button></div>
     </div>`).join('')+
     `<div class="knapperad"><button class="knapp sek" onclick="nyttLaan()">+ Legg til lån</button></div>`+
@@ -733,8 +733,7 @@ function tegnRediger(b){
       A().laan[+j][k]= k==='navn'?el.value:num(el.value); }
     else { const k=el.id.slice(2); A()[k]= k==='navn'?el.value:num(el.value); }
     lagre();
-    const id=el.id, pos=el.selectionStart; tegnAlt();
-    const e2=$(id); if(e2){ e2.focus(); try{e2.setSelectionRange(pos,pos)}catch(x){} }
+    tegnAlt(true);   // regn om alt UNNTATT dette panelet — feltet beholder fokus
   }));
 }
 
@@ -901,9 +900,7 @@ function tegnNB(){
 }
 
 /* ═════════ 10 · oppstart ═════════ */
-/* Lyst er standard — også for de som kjører mørk modus på systemet. Mørkt er
-   alternativ nr. 2, ett trykk unna. Har brukeren valgt selv, gjelder valget. */
-settTema(Lager.les('rr_tema') || 'lys');
+settTema(Lager.les('rr_tema') || (matchMedia('(prefers-color-scheme: dark)').matches?'mork':'lys'));
 document.querySelectorAll('input[type=range]').forEach(el=>
   el.addEventListener('input',()=>{ oppdaterSpor(); tegnAlt(); }));
 $('q_bank').addEventListener('input',e=>{ bankFilter.q=e.target.value; bankFilter.vis=8; tegnBanker(); });
