@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Renteradar — regn på boligkjøpet før du byr</title>
+<meta name="description" content="Gratis verktøy som regner på boliglån, deleie og leie. Live styringsrente fra Norges Bank. Alt regnes i nettleseren — ingenting sendes noe sted.">
+<meta property="og:title" content="Renteradar">
+<meta property="og:description" content="Regn på boligkjøpet før du byr. Gratis, ingen innlogging, virker på mobil.">
+<meta property="og:type" content="website">
+<style>
+:root{
+  --flate:#FFFFFF; --flate2:#F7F8FA; --flate3:#EEF1F5; --kant:#E2E6EC;
+  --ink:#0F172A; --ink2:#475569; --ink3:#8A95A5;
+  --c1:#2563EB; --c2:#0D9488; --c3:#D97706;
+  --skygge:0 1px 2px rgba(15,23,42,.06),0 10px 30px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--flate2);color:var(--ink);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,sans-serif;
+  font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.side{max-width:640px;margin-inline:auto;padding:34px 18px 70px}
+
+.merke{display:flex;align-items:center;gap:11px;margin-bottom:22px}
+.logo{width:38px;height:38px;border-radius:11px;background:var(--c1);position:relative;flex:none}
+.logo::after{content:'';position:absolute;inset:9px;border-radius:50%;border:3px solid #fff;
+  border-right-color:transparent;border-bottom-color:transparent;transform:rotate(-45deg)}
+h1{font-size:34px;font-weight:800;letter-spacing:-.03em;margin:0}
+.ingress{font-size:20px;color:var(--c1);font-weight:600;margin:0 0 14px;line-height:1.4}
+.under{color:var(--ink2);font-size:16.5px;margin:0 0 26px}
+
+.knapp{display:block;background:var(--c1);color:#fff;text-align:center;text-decoration:none;
+  font-weight:800;font-size:18px;padding:17px;border-radius:14px;margin:0 0 10px;
+  box-shadow:0 6px 20px rgba(37,99,235,.28)}
+.knapp small{display:block;font-weight:600;font-size:13.5px;opacity:.9;margin-top:3px}
+.liten{color:var(--ink3);font-size:14px;text-align:center;margin:0 0 34px}
+
+h2{font-size:14px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink3);margin:34px 0 10px}
+.kort{background:var(--flate);border:1px solid var(--kant);border-radius:16px;
+  padding:18px;margin:11px 0;box-shadow:var(--skygge)}
+.kort .t{font-weight:800;font-size:16.5px;margin-bottom:4px}
+.kort .b{font-size:15px;color:var(--ink2)}
+.kort .t .prikk{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:8px}
+
+.to{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+@media(max-width:520px){.to{grid-template-columns:1fr}}
+.to .kort{margin:0}
+.merkelapp{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;
+  color:var(--ink3);margin-bottom:8px}
+ul{padding-left:20px;margin:8px 0 0}
+li{margin:7px 0;font-size:15px;color:var(--ink2)}
+li::marker{color:var(--c1)}
+
+.tall{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:11px 0}
+@media(max-width:520px){.tall{grid-template-columns:1fr}}
+.tall .kort{margin:0;text-align:left}
+.tall .v{font-size:30px;font-weight:800;color:var(--c1);letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;line-height:1.15}
+.tall .n{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);font-weight:800}
+.tall .d{font-size:13px;color:var(--ink2);margin-top:5px}
+
+.bilde{width:100%;border-radius:14px;border:1px solid var(--kant);display:block;
+  box-shadow:var(--skygge);margin:12px 0}
+.bildetekst{font-size:13.5px;color:var(--ink3);margin:0 0 6px}
+
+.personvern{background:#F0F6FF;border:1px solid #CFE0FF;border-radius:16px;padding:18px;margin:11px 0}
+.personvern .t{font-weight:800;font-size:16.5px;margin-bottom:8px;color:var(--c1)}
+.personvern p{margin:0 0 9px;font-size:15px;color:var(--ink2)}
+.personvern p:last-child{margin-bottom:0}
+
+footer{margin-top:40px;border-top:1px solid var(--kant);padding-top:18px;
+  color:var(--ink3);font-size:13.5px;line-height:1.7}
+footer a{color:var(--c1)}
+</style>
+</head>
+<body>
+<div class="side">
+
+<div class="merke"><div class="logo"></div><h1>Renteradar</h1></div>
+<p class="ingress">Regn på boligkjøpet — før du byr</p>
+<p class="under">Boliglån, deleie og leie i samme verktøy, med ekte renter hentet automatisk.
+Jeg lagde det fordi ingen bankkalkulator klarte å regne på det jeg faktisk sto overfor.</p>
+
+<a class="knapp" href="radar.html">Åpne Renteradar
+  <small>Gratis · ingen innlogging · virker på mobil</small></a>
+<p class="liten">Ingenting installeres. Det åpner seg i nettleseren.</p>
+
+<h2>Hvorfor det finnes</h2>
+<div class="kort">
+  <div class="t">En bankkalkulator har to felter</div>
+  <div class="b">Lånebeløp og rente, så får du ett månedsbeløp. Helt riktig — for et vanlig lån
+  på en vanlig bolig.</div>
+</div>
+<div class="kort">
+  <div class="t">Men et ekte boligkjøp har flere ting samtidig</div>
+  <ul>
+    <li>Egenkapital og omkostninger</li>
+    <li>Felleskostnader ved siden av lånet</li>
+    <li>Flere lån med ulik rente og løpetid</li>
+    <li>Fellesgjeld i borettslag</li>
+    <li>Eierandel som kan vokse, hvis du deleier</li>
+    <li>Gjeldsgrad mot lovens tak på fem ganger inntekt</li>
+    <li>En verdi som beveger seg opp og ned</li>
+  </ul>
+  <p style="margin:12px 0 0;font-size:15px">Ingenting av dette er vanskelig regning. Det er bare
+  mange små stykker som må holdes sammen samtidig.</p>
+</div>
+
+<h2>Slik ser det ut</h2>
+<p class="bildetekst">Ett tall øverst — det du faktisk betaler. Spakene under endrer alt i samme tastetrykk.</p>
+<img class="bilde" src="bilder/radar-hoved.png" alt="Renteradar viser 22 170 kr ut av konto per måned, delt i renter, avdrag og felleskostnader, med spaker for lånerente og boligmarked">
+
+<h2>Tre typer i samme verktøy</h2>
+<div class="kort">
+  <div class="t"><span class="prikk" style="background:#2563EB"></span>Boligkjøp</div>
+  <div class="b">Vanlig kjøp med boliglån. Renter, avdrag, belåningsgrad mot 90 %-grensen,
+  og hele nedbetalingen år for år.</div>
+</div>
+<div class="kort">
+  <div class="t"><span class="prikk" style="background:#0D9488"></span>Deleie</div>
+  <div class="b">Du eier en andel og leier resten. Fellesgjeld, leie til utleier, og hva det
+  koster å kjøpe seg opp. Ingen bank har en kalkulator for dette.</div>
+</div>
+<div class="kort">
+  <div class="t"><span class="prikk" style="background:#D97706"></span>Leie</div>
+  <div class="b">Nullpunktet. Uten et ærlig sammenligningsgrunnlag ser alle boligkjøp bra ut.</div>
+</div>
+<p style="font-size:15px;color:var(--ink2)">Lag flere beregninger og sett dem i samme tabell —
+den billigste markeres i grønt.</p>
+
+<h2>Gjeld mot egenkapital</h2>
+<p class="bildetekst">Hele nedbetalingen, år for år. Der de to kurvene krysser hverandre eier du
+mer enn du skylder.</p>
+<img class="bilde" src="bilder/radar-graf.png" alt="Graf som viser gjeld som faller og egenkapital som stiger over 30 år, med krysningspunkt rundt år 18">
+
+<h2>Ekte tall, hentet automatisk</h2>
+<div class="tall">
+  <div class="kort"><div class="n">Styringsrenten</div><div class="v">4,25 %</div>
+    <div class="d">Direkte fra Norges Bank, hver gang siden åpnes</div></div>
+  <div class="kort"><div class="n">Laveste boliglån</div><div class="v">4,95 %</div>
+    <div class="d">37 bankrenter i søkbar liste</div></div>
+  <div class="kort"><div class="n">Snitt nye lån</div><div class="v">5,22 %</div>
+    <div class="d">Fra Statistisk sentralbyrå</div></div>
+</div>
+<div class="kort">
+  <div class="t">Trykk på en bank, så settes renta inn i beregningen</div>
+  <div class="b">Fire kategorier: vanlig, ung, fastrente og rammelån. Både nominell og effektiv
+  rente vises — og det er den effektive som teller, for den har gebyrene med.
+  Verktøyet viser aldri et tall det ikke har kilde for.</div>
+</div>
+
+<h2>Tallene dine forlater aldri telefonen</h2>
+<div class="personvern">
+  <div class="t">Ingen konto, ingen server, ingen database</div>
+  <p><b>Alt regnes lokalt.</b> Beregningene skjer i nettleseren din. Ingen server ser hva du
+  legger inn — det finnes ingen innlogging og ingen database.</p>
+  <p><b>Lagres på din enhet.</b> Beregningene ligger i nettleseren på telefonen du bruker.
+  Ingen andre kan se dem. Sletter du nettleserdata, forsvinner de.</p>
+  <p><b>Det eneste som sendes ut</b> er spørsmålet «hva er renta nå?» til Norges Bank.
+  De får ikke vite noe om deg.</p>
+</div>
+
+<a class="knapp" href="radar.html" style="margin-top:26px">Åpne Renteradar
+  <small>Gratis · ingen innlogging · virker på mobil</small></a>
+
+<footer>
+Renteradar er en kalkulator, ikke rådgivning. Tall om en konkret bolig må alltid bekreftes
+mot prospekt, selger og bank.<br><br>
+Live styringsrente: <a href="https://data.norges-bank.no" target="_blank" rel="noopener">Norges Banks åpne data</a>.
+Bankrenter fra Finansportalen.<br>
+Laget av Kristian, august 2026.
+</footer>
+
+</div>
+</body>
+</html>
