@@ -900,7 +900,9 @@ function tegnNB(){
 }
 
 /* ═════════ 10 · oppstart ═════════ */
-settTema(Lager.les('rr_tema') || (matchMedia('(prefers-color-scheme: dark)').matches?'mork':'lys'));
+/* Lyst er standard — også for de som kjører mørk modus på systemet. Mørkt er
+   alternativ nr. 2, ett trykk unna. Har brukeren valgt selv, gjelder valget. */
+settTema(Lager.les('rr_tema') || 'lys');
 document.querySelectorAll('input[type=range]').forEach(el=>
   el.addEventListener('input',()=>{ oppdaterSpor(); tegnAlt(); }));
 $('q_bank').addEventListener('input',e=>{ bankFilter.q=e.target.value; bankFilter.vis=8; tegnBanker(); });
