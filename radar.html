@@ -156,7 +156,23 @@ Alt regnes i nettleseren — ingenting sendes noe sted.</p>
 <div id="app" style="display:none">
 
   <div class="faner" id="faner"></div>
+  <div class="kort" id="velgType" style="display:none">
+    <b style="font-size:15px">Ny beregning — hva vil du regne på?</b>
+    <div class="valg">
+      <button class="valgkort" onclick="lukkVelg();nyType('boliglaan')"><div class="t">Boligkjøp</div>
+        <div class="b">Vanlig kjøp med boliglån</div></button>
+      <button class="valgkort" onclick="lukkVelg();nyType('deleie')"><div class="t">Deleie</div>
+        <div class="b">Du eier en andel og leier resten</div></button>
+      <button class="valgkort" onclick="lukkVelg();nyType('leie')"><div class="t">Leie</div>
+        <div class="b">Nullpunktet å måle mot</div></button>
+    </div>
+    <div class="knapperad"><button class="knapp sek" onclick="lukkVelg()">Avbryt</button></div>
+  </div>
 
+  <div class="notis" id="eksempelVarsel" style="display:none">
+    <b>Dette er eksempeltall.</b> Trykk «Rediger beregningen» og legg inn dine egne —
+    alt regnes om i samme tastetrykk.
+  </div>
   <div class="hero">
     <div class="l" id="heroLabel">Ut av konto per måned</div>
     <div class="v" id="heroTall">—</div>
@@ -199,8 +215,8 @@ Alt regnes i nettleseren — ingenting sendes noe sted.</p>
     <summary>Månedskostnaden, krone for krone</summary>
     <div class="innhold"><div class="rull"><table id="mndTabell"></table></div></div>
   </details>
-  <details>
-    <summary>Rediger beregningen</summary>
+  <details id="dRediger">
+    <summary>Rediger beregningen — legg inn dine egne tall</summary>
     <div class="innhold" id="fakta"></div>
   </details>
   <details>
@@ -514,21 +530,15 @@ function linjegraf(svgId,opt){
 }
 
 /* ═════════ 7 · beregninger ═════════ */
-/* Typevelgeren vises når lista er tom ELLER når du selv ber om den med «+ ny».
-   Før lå den bak en fritekst-prompt, som gjorde at du satt fast i den typen du
-   først valgte — nå er det de samme tre kortene, med Avbryt når du har noe fra før. */
-let visVelger=false;
 function tegnVelkomst(){
   const tom=!S.liste.length;
-  const vis=tom||visVelger;
-  $('velkomst').style.display=vis?'':'none';
-  $('app').style.display=vis?'none':'';
-  if(!vis){ $('velkomst').innerHTML=''; return; }
+  $('velkomst').style.display=tom?'':'none';
+  $('app').style.display=tom?'none':'';
+  if(!tom){ $('velkomst').innerHTML=''; return; }
   $('velkomst').innerHTML=`<div class="kort">
     <b style="font-size:17px">Hva vil du regne på?</b>
     <p style="color:var(--ink2);font-size:14px;margin:6px 0 0">
-      ${tom?'Verktøyet starter tomt. Velg en type, så fylles det inn eksempeltall du bytter ut med dine egne.'
-           :'Velg type for den nye beregningen. Den du står i nå blir liggende som egen fane.'}</p>
+      Verktøyet starter tomt. Velg en type, så fylles det inn eksempeltall du bytter ut med dine egne.</p>
     <div class="valg">
       <button class="valgkort" onclick="nyType('boliglaan')"><div class="t">Boligkjøp</div>
         <div class="b">Vanlig kjøp med boliglån. Renter, avdrag og belåningsgrad.</div></button>
@@ -536,31 +546,24 @@ function tegnVelkomst(){
         <div class="b">Du eier en andel og leier resten. Fellesgjeld og opptrapping.</div></button>
       <button class="valgkort" onclick="nyType('leie')"><div class="t">Leie</div>
         <div class="b">Nullpunktet å måle de andre mot.</div></button>
-    </div>
-    ${tom?'':`<div style="margin-top:12px"><button class="knapp sek" onclick="avbrytVelger()">Avbryt</button></div>`}
-    </div>`;
+    </div></div>`;
 }
 function nyType(t){
-  const n=prompt('Navn på beregningen',TYPENAVN[t]); if(n===null) return;
-  S.liste.push(JSON.parse(JSON.stringify({...MAL[t],navn:n||TYPENAVN[t]})));
-  S.aktiv=S.liste.length-1; visVelger=false; lagre(); tegnVelkomst(); settSpaker(); tegnAlt();
+  // finn et ledig navn uten å plage brukeren med en dialog
+  let base=TYPENAVN[t], navn=base, n=2;
+  while(S.liste.some(x=>x.navn===navn)) navn=base+' '+(n++);
+  S.liste.push(JSON.parse(JSON.stringify({...MAL[t],navn})));
+  S.aktiv=S.liste.length-1; lagre(); tegnVelkomst(); settSpaker(); tegnAlt();
+  ferskBeregning=true; visRediger();
 }
-function nyBeregning(){ visVelger=true; tegnVelkomst(); }
-function avbrytVelger(){ visVelger=false; tegnVelkomst(); settSpaker(); tegnAlt(); }
-/* Bytter type på beregningen du står i, uten å lage en ny fane. Navn og lån følger med;
-   de typespesifikke feltene (innskudd/fellesgjeld/leie …) settes til malens eksempeltall,
-   siden de ikke betyr det samme på tvers av typene. */
-function byttType(){
-  const b=A(); if(!b) return;
-  const rekke=['boliglaan','deleie','leie'];
-  const valg=prompt('Bytt til hvilken type?\n1 = Boligkjøp\n2 = Deleie\n3 = Leie',
-    String(rekke.indexOf(b.type)+1));
-  if(valg===null) return;
-  const t=rekke[(parseInt(valg,10)||0)-1];
-  if(!t||t===b.type) return;
-  S.liste[S.aktiv]={...JSON.parse(JSON.stringify(MAL[t])), navn:b.navn, laan:b.laan||[], lonn:b.lonn};
-  lagre(); settSpaker(); tegnAlt();
+function visRediger(){
+  const d=$('dRediger'); if(d){ d.open=true;
+    setTimeout(()=>d.scrollIntoView({behavior:'smooth',block:'start'}),120); }
 }
+function nyBeregning(){ $('velgType').style.display='';
+  setTimeout(()=>$('velgType').scrollIntoView({behavior:'smooth',block:'center'}),60); }
+var ferskBeregning=false;
+function lukkVelg(){ $('velgType').style.display='none'; }
 function velg(i){ S.aktiv=i; lagre(); settSpaker(); tegnAlt(); }
 function dupliser(){ S.liste.push(JSON.parse(JSON.stringify({...A(),navn:A().navn+' (kopi)'})));
   S.aktiv=S.liste.length-1; lagre(); tegnAlt(); }
@@ -588,6 +591,10 @@ function tegnAlt(){
   $('faner').innerHTML=S.liste.map((x,i)=>
     `<button class="fane${i===S.aktiv?' på':''}" onclick="velg(${i})">${x.navn}</button>`).join('')
     +`<button class="fane ny" onclick="nyBeregning()">+ ny</button>`;
+  const mal=MAL[b.type];
+  const urort=Object.keys(mal).every(k=>k==='navn'||k==='laan'||
+    JSON.stringify(b[k])===JSON.stringify(mal[k]));
+  $('eksempelVarsel').style.display = urort?'':'none';
   $('heroLabel').textContent='Ut av konto per måned · '+b.navn;
   $('heroTall').innerHTML=tall(m.ut)+' <small>kr</small>';
   const d=m.ut-base.ut;
@@ -701,7 +708,9 @@ function tegnNedbetaling(b,s){
 function tegnRediger(b){
   const erDel=b.type==='deleie';
   $('fakta').innerHTML=
-    `<div class="felt"><label>Navn</label><input id="e_navn" value="${b.navn}" style="text-align:left"></div>`+
+    `<p class="status" style="margin:0 0 10px">Bytt ut tallene med dine egne.
+      Alt over regnes om mens du skriver.</p>`+
+    `<div class="felt"><label>Navn på beregningen</label><input id="e_navn" value="${b.navn}" style="text-align:left"></div>`+
     `<div class="felt"><label>Utgangsrente (%)</label><input id="e_rente" value="${b.rente}"></div>`+
     (erDel?`<div class="felt"><label>Eierandel ved kjøp (%)</label><input id="e_andel" value="${b.andel}"></div>`:'')+
     FELT[b.type].map(f=>`<div class="felt"><label>${f[1]}</label><input id="e_${f[0]}" value="${b[f[0]]}"></div>`).join('')+
@@ -717,8 +726,6 @@ function tegnRediger(b){
     </div>`).join('')+
     `<div class="knapperad"><button class="knapp sek" onclick="nyttLaan()">+ Legg til lån</button></div>`+
     `<div class="knapperad" style="margin-top:18px;border-top:1px solid var(--kant);padding-top:14px">
-      <button class="knapp sek" onclick="nyBeregning()">+ Ny beregning</button>
-      <button class="knapp sek" onclick="byttType()">Bytt type</button>
       <button class="knapp sek" onclick="dupliser()">Dupliser</button>
       <button class="knapp fare" onclick="slettBeregning()">Slett beregningen</button></div>`;
   $('fakta').querySelectorAll('input').forEach(el=>el.addEventListener('input',()=>{
@@ -901,6 +908,21 @@ $('q_bank').addEventListener('input',e=>{ bankFilter.q=e.target.value; bankFilte
 addEventListener('resize',()=>{ if(S.liste.length) tegnAlt(); });
 oppdaterSpor(); tegnVelkomst();
 if(S.liste.length){ settSpaker(); tegnAlt(); }
+/* ── markedsdata fra serveren: offentlig endepunkt, faller stille tilbake ── */
+(async function hentMarked(){
+  if(!/^https?:$/.test(location.protocol)) return;
+  try{
+    const r=await fetch('https://api.smidd.app/radar/api/renter',{cache:'no-store'});
+    if(!r.ok) return;
+    const j=await r.json();
+    if(Array.isArray(j.banker)&&j.banker.length)
+      BANKER=j.banker.map(b=>[b.navn,b.nominell,b.effektiv,b.kategori||'vanlig',b.gjelder||'']);
+    if(j.hentet) MARKED.kilde=(j.kilde||'Finansportalen')+', oppdatert '+
+      new Date(j.hentet).toLocaleDateString('no-NO');
+    tegnBanker();
+  }catch(e){ /* offline eller endepunkt ikke bygget — øyeblikksbildet står */ }
+})();
+
 if(/^https?:$/.test(location.protocol)) hentNB();
 else $('hentStatus').textContent='Åpne over nett for å hente live tall';
 </script>
