@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smidd — lukket testing</title>
+<meta name="description" content="Du er en av tolv som får teste Smidd før den slippes. Slik kommer du i gang.">
+<meta property="og:title" content="Smidd — lukket testing">
+<meta property="og:description" content="En treningsapp bygget i Tromsø. Du er en av tolv som får se den først.">
+<style>
+:root{--bg:#0A0A0A;--kort:#151515;--blaa:#4F8DFF;--hvit:#fff;--graa:#A1A1AA;--linje:#2A2A2A}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--hvit);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,sans-serif;
+  font-size:17px;line-height:1.6;padding:38px 20px 80px;max-width:640px;margin-inline:auto}
+h1{font-size:40px;margin:0 0 4px;font-weight:800;letter-spacing:-.03em}
+.und{color:var(--blaa);font-size:20px;font-weight:600;margin:0 0 18px}
+.strek{width:52px;height:2px;background:var(--linje);margin:0 0 18px}
+.ingress{color:var(--graa);font-size:17px;margin:0 0 40px}
+h2{font-size:21px;margin:40px 0 12px;font-weight:700;letter-spacing:-.01em}
+.kort{background:var(--kort);border:1px solid var(--linje);border-radius:14px;
+  padding:16px 18px;margin:12px 0}
+.kort b{color:var(--blaa)}
+.steg{display:flex;gap:14px;align-items:flex-start;background:var(--kort);
+  border:1px solid var(--linje);border-radius:14px;padding:16px 18px;margin:12px 0}
+.num{flex:0 0 30px;height:30px;border-radius:50%;background:var(--blaa);color:#0A0A0A;
+  font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;
+  margin-top:2px}
+.steg p{margin:0}
+.steg .t{font-weight:700;margin-bottom:3px}
+.steg .d{color:var(--graa);font-size:15.5px}
+ul{padding-left:20px;margin:10px 0}
+li{margin:8px 0}
+li::marker{color:var(--blaa)}
+.knapp{display:block;background:var(--blaa);color:#0A0A0A;text-align:center;
+  text-decoration:none;font-weight:800;font-size:18px;padding:16px;border-radius:13px;
+  margin:26px 0 10px}
+.liten{color:var(--graa);font-size:15px}
+.epost{display:inline-block;background:#0E0E0E;border:1px solid #333;border-radius:9px;
+  padding:9px 13px;color:var(--blaa);text-decoration:none;font-weight:600;
+  word-break:break-all;margin-top:6px}
+.to{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.to{grid-template-columns:1fr}}
+.to .kort{margin:0}
+.merke{font-size:12px;letter-spacing:.13em;font-weight:700;color:var(--blaa);
+  text-transform:uppercase;margin:0 0 10px}
+.merke.d{color:var(--graa)}
+.to ul{margin:0;padding-left:18px}
+footer{margin-top:52px;padding-top:22px;border-top:1px solid var(--linje);
+  color:#6B6B72;font-size:14px;line-height:1.7}
+a{color:var(--blaa)}
+</style>
+</head>
+<body>
+
+<h1>Smidd</h1>
+<p class="und">Lukket testing</p>
+<div class="strek"></div>
+<p class="ingress">En treningsapp bygget i Tromsø. Du er en av tolv som får se den først.</p>
+
+<h2>Hva Smidd er</h2>
+<div class="kort"><b>Trening.</b> Økter, sett, vekter og personlige rekorder. Muskelkart som viser hva du faktisk har trent.</div>
+<div class="kort"><b>Kosthold.</b> Måltider og kalorier. Søk i Matvaretabellen, strekkode, eller bilde av tallerkenen.</div>
+<div class="kort"><b>Form.</b> Dagsform, søvn og hvilepuls samlet ett sted, koblet mot treningen din.</div>
+<div class="kort"><b>Coach.</b> En AI-coach som kjenner loggen din og svarer på norsk.</div>
+
+<h2>Slik kommer du i gang</h2>
+
+<a class="knapp" href="https://play.google.com/apps/testing/com.kagfr.protracker">Bli tester</a>
+<p class="liten" style="margin-top:0">Åpne knappen over med <b>samme Google-konto som telefonen din bruker</b>. Det er den vanligste grunnen til at det ikke virker.</p>
+
+<div class="steg"><div class="num">1</div><div><p class="t">Godta invitasjonen</p><p class="d">Trykk på knappen over og velg «Bli tester».</p></div></div>
+<div class="steg"><div class="num">2</div><div><p class="t">Installer fra Play</p><p class="d">Etter at du har godtatt, finner du Smidd i Play Butikk som vanlig. Ikke last ned filer fra andre steder.</p></div></div>
+<div class="steg"><div class="num">3</div><div><p class="t">Lag en konto</p><p class="d">Registrer deg i appen og fyll ut oppstarten. Bruk ekte tall — da blir det du ser faktisk riktig.</p></div></div>
+
+<h2>Hva jeg ber om</h2>
+<div class="to">
+  <div class="kort">
+    <p class="merke">Gjør dette</p>
+    <ul>
+      <li>Logg de øktene du faktisk tar</li>
+      <li>Logg maten du faktisk spiser</li>
+      <li>Gå en tur med GPS-en på</li>
+      <li>Snakk med coachen om noe ekte</li>
+      <li>Åpne appen på ulike tider av døgnet</li>
+    </ul>
+  </div>
+  <div class="kort">
+    <p class="merke d">Ikke tenk på</p>
+    <ul>
+      <li>Å finne feil med vilje</li>
+      <li>Å teste alt systematisk</li>
+      <li>Å være høflig i tilbakemeldingene</li>
+      <li>Om noe er «for smått» å nevne</li>
+      <li>Å bruke den perfekt</li>
+    </ul>
+  </div>
+</div>
+<p style="margin-top:16px">Det jeg trenger mest er hva som er irriterende, ikke hva som krasjer.</p>
+
+<h2>De fjorten dagene</h2>
+<div class="kort">
+  <p style="margin:0 0 10px">Google krever <b>tolv testere i fjorten sammenhengende dager</b> før appen kan slippes ut til vanlige brukere.</p>
+  <p style="margin:0 0 10px">Telleren stopper hvis noen faller fra. Avinstallerer du, mister vi en plass — og alle må vente lenger.</p>
+  <p style="margin:0" class="liten">Det eneste jeg ber om: la appen bli stående, også de dagene du ikke bruker den. Oppdateringer installerer seg selv.</p>
+</div>
+
+<h2>Slik melder du fra</h2>
+<div class="kort">
+  <p style="margin:0 0 8px">Ta med hvis du har det: hvilken skjerm du var på, hva du gjorde rett før, et skjermbilde, og telefonmodell.</p>
+  <p style="margin:0 0 4px" class="liten">Send til:</p>
+  <a class="epost" href="mailto:kagfrom@hotmail.com?subject=Smidd%20-%20tilbakemelding">kagfrom@hotmail.com</a>
+  <p style="margin:14px 0 0">Eller bare send meg en melding. Skriv rett fram — jeg tåler det, og det er mer nyttig enn høflighet.</p>
+  <p style="margin:10px 0 0" class="liten">«Knappen der nede er vanskelig å treffe» er en fullgod tilbakemelding.</p>
+</div>
+
+<h2>Om dataene dine</h2>
+<div class="kort"><b>På serveren min.</b> Økter, måltider, kroppsmål, dagsform, humør og syklus lagres på en server jeg drifter, så de følger med hvis du bytter telefon.</div>
+<div class="kort"><b>Bare på telefonen.</b> GPS-spor fra turer, fremgangsbilder og eventuelle medisiner forlater aldri enheten.</div>
+<div class="kort"><b>Aldri lagret.</b> Bilder av mat brukes til å gjenkjenne måltidet og slettes umiddelbart etterpå.</div>
+<div class="kort"><b>Du kan slette alt.</b> Innstillinger → Slett konto. Da forsvinner alt sammen, uten at du trenger å oppgi noen grunn.</div>
+<p class="liten">Full personvernerklæring: <a href="./">kagfr.github.io/protracker-privacy</a></p>
+
+<h2>Hva du bør forvente</h2>
+<div class="to">
+  <div class="kort">
+    <p class="merke d">Dette vet jeg om</p>
+    <ul>
+      <li>Enkelte tekster er unøyaktige og rettes fortløpende</li>
+      <li>Norsk tekst dukker opp når appen står på engelsk</li>
+      <li>GPS er testet i emulator, ikke ute i felt</li>
+      <li>Enkelte skjermer er nye og lite brukt</li>
+    </ul>
+  </div>
+  <div class="kort">
+    <p class="merke">Dette skal virke</p>
+    <ul>
+      <li>Logging av økter, mat og form</li>
+      <li>Coachen og søket i matvarene</li>
+      <li>Sletting av kontoen din</li>
+      <li>At appen ikke krasjer</li>
+    </ul>
+  </div>
+</div>
+<p style="margin-top:16px">Finner du noe i venstre kolonne som ikke står der: det er akkurat det jeg trenger å høre.</p>
+
+<footer>
+Appen er bygget alene, ved siden av jobb. At dere gidder å prøve den er det som gjør at den kommer ut i det hele tatt.<br><br>
+Kristian · <a href="mailto:kagfrom@hotmail.com">kagfrom@hotmail.com</a>
+</footer>
+
+</body>
+</html>
