@@ -140,18 +140,47 @@ tr.klikk:hover td{background:var(--flate3)}
 footer{margin-top:36px;color:var(--ink3);font-size:12px;line-height:1.65;
   border-top:1px solid var(--kant);padding-top:16px}
 footer a{color:var(--c1)}
+
+/* ══════════ bil-delen, navigasjon, anslag (22.08.2026) ══════════ */
+.versjon{font-size:11px;color:var(--ink3);font-weight:600;white-space:nowrap}
+.navmeny{position:sticky;top:0;z-index:50;background:var(--flate2);display:flex;gap:6px;
+  flex-wrap:wrap;padding:8px 0;margin:0 0 4px;border-bottom:1px solid var(--kant)}
+.navmeny a{background:var(--flate);border:1px solid var(--kant);border-radius:99px;
+  color:var(--ink2);font-size:12px;font-weight:700;padding:5px 11px;text-decoration:none}
+.navmeny a:hover{border-color:var(--c1);color:var(--c1)}
+[id]{scroll-margin-top:64px}
+.anslag{background:var(--varselBg);color:var(--varsel);border:1px solid var(--varsel);
+  border-radius:99px;font-size:10.5px;font-weight:800;padding:1px 8px;cursor:pointer;
+  vertical-align:2px;font-family:inherit}
+.anslagTekst{display:none;font-size:12px;color:var(--ink2)}
+.anslag[aria-expanded="true"]+.anslagTekst{display:inline}
+.bilgraf{width:100%;display:block}
+.sperre{border-left:3px solid var(--kritisk);background:var(--kritiskBg);color:var(--ink);
+  border-radius:0 10px 10px 0;padding:11px 14px;font-size:13px;margin:10px 0}
+@media print{
+  .anslagTekst{display:inline!important}
+  .anslag{border:none;background:none;padding:0}
+  .navmeny{display:none}
+  details{display:block}
+  details>*{display:revert}
+}
 </style>
 </head>
 <body>
 <div class="side">
 
 <div class="topp">
-  <div class="merke"><div class="logo"></div><h1>Renteradar</h1></div>
+  <div class="merke"><div class="logo"></div><h1>Renteradar</h1><span class="versjon" id="versjon">v22.08.2026 · bil1</span></div>
   <button class="ikonknapp" id="temaKnapp" onclick="byttTema()">Mørkt</button>
 </div>
 <p class="undertittel">Regn på boliglån, deleie og leie i samme verktøy.
 Alt regnes i nettleseren — ingenting sendes noe sted.</p>
 
+<nav class="navmeny" aria-label="Seksjoner">
+  <a href="#spaker">Spakene</a><a href="#nokkeltall">Nøkkeltall</a><a href="#overtid">Over tid</a>
+  <a href="#styringsrenten">Styringsrenten</a><a href="#markedet">Renter i markedet</a>
+  <a href="#bil">Bilkjøp</a>
+</nav>
 <div id="velkomst"></div>
 <div id="app" style="display:none">
 
@@ -183,7 +212,7 @@ Alt regnes i nettleseren — ingenting sendes noe sted.</p>
 
   <div class="chips" id="chips"></div>
 
-  <h2>Dra i spakene</h2>
+  <h2 id="spaker">Dra i spakene</h2>
   <div class="spak">
     <div class="rad"><span class="navn" id="n_rente">Rente</span><span class="verdi" id="v_rente"></span></div>
     <input type="range" id="s_rente" min="1" max="10" step="0.01" value="5">
@@ -200,10 +229,10 @@ Alt regnes i nettleseren — ingenting sendes noe sted.</p>
     <div class="folge" id="f_andel"></div>
   </div>
 
-  <h2>Nøkkeltall</h2>
+  <h2 id="nokkeltall">Nøkkeltall</h2>
   <div class="rutenett" id="resultater"></div>
 
-  <h2>Over tid</h2>
+  <h2 id="overtid">Over tid</h2>
   <div class="kort">
     <b style="font-size:14.5px">Gjeld mot egenkapital</b>
     <div class="status" id="nedbetalingHint"></div>
@@ -226,7 +255,7 @@ Alt regnes i nettleseren — ingenting sendes noe sted.</p>
       Grønn rad har lavest sum ut av konto.</p></div>
   </details>
 
-  <h2>Styringsrenten fra Norges Bank</h2>
+  <h2 id="styringsrenten">Styringsrenten fra Norges Bank</h2>
   <div class="kort">
     <div class="chips" id="nbPeriode"></div>
     <div class="rutenett" id="nbStat" style="margin-bottom:12px"></div>
@@ -253,7 +282,7 @@ Alt regnes i nettleseren — ingenting sendes noe sted.</p>
   <details><summary>Alle renteendringer</summary>
     <div class="innhold"><div class="rull"><table id="nbEndringer"></table></div></div></details>
 
-  <h2>Renter i markedet</h2>
+  <h2 id="markedet">Renter i markedet</h2>
   <div class="kort">
     <input class="sok" id="q_bank" placeholder="Søk bank eller vilkår …">
     <div class="chips" id="bankKat"></div>
@@ -261,8 +290,148 @@ Alt regnes i nettleseren — ingenting sendes noe sted.</p>
     <div class="rull"><table id="bankTabell"></table></div>
     <div class="knapperad" id="bankMer"></div>
     <p class="status" id="bankKilde" style="margin-top:10px"></p>
+    <p class="status">Direktekobling til Finansportalen: <b>av</b> — venter på signert
+    distribusjonsavtale. Lista over er et øyeblikksbilde / serverens håndførte kopi.</p>
   </div>
 
+</div>
+
+<h2 id="bil">Bilkjøp</h2>
+<p class="undertittel">Verditapet først — det er den største posten og den ingen ser.
+Så lån mot kontant, forskriften, Tromsø-bommen og resten. Alt regnes lokalt.</p>
+
+<!-- 1a · verditapet -->
+<div class="kort">
+  <b style="font-size:14.5px">Hva bilen faktisk koster: verditapet</b>
+  <div class="felt"><label>Bilens pris (kr)</label><input id="bilPris" inputmode="numeric"></div>
+  <div class="felt"><label>Eie i (år)</label><input id="bilAar" inputmode="numeric"></div>
+  <svg class="bilgraf" id="bilTapGraf" height="210"></svg>
+  <div class="rutenett" id="bilTapKort" style="margin-top:10px"></div>
+  <p class="status">Ny bil: −20 % etter ett år, −40 % etter tre, −53 % etter fem.
+  Kjøpt fire år gammel: −17 % etter ett år, −34 % etter tre (OFV). Mellom punktene er
+  kurven trukket rett; etter siste punkt fortsetter den i samme takt — ekstrapolert,
+  ikke målt.</p>
+</div>
+
+<!-- 1b · kontant mot lån -->
+<div class="kort">
+  <b style="font-size:14.5px">Kontant, lån — eller ikke ennå</b>
+  <div class="felt"><label>Kontanter tilgjengelig (kr)</label><input id="bilKontant" inputmode="numeric"></div>
+  <div class="felt"><label>Buffer på egen konto (kr)</label><input id="bilBuffer" inputmode="numeric"></div>
+  <div class="felt"><label>Faste utgifter (kr/mnd)</label><input id="bilFaste" inputmode="numeric"></div>
+  <div class="felt"><label>Sparing (kr/mnd)</label><input id="bilSparing" inputmode="numeric"></div>
+  <div class="felt"><label>Fellesgjeldsrente, nominell (%)</label><input id="bilFgRente" inputmode="decimal"></div>
+  <p class="status" style="margin:4px 0 0" id="bilFgMerke"></p>
+  <div style="margin:10px 0 4px">
+    <label style="font-size:13px;color:var(--ink2)">
+      <input type="checkbox" id="bilFradrag"> Rentefradraget gjelder meg (22&nbsp;%)</label>
+  </div>
+  <div class="notis"><b>Rentefradraget er satt til null som standard.</b> Fradraget virker
+  bare mot positiv alminnelig inntekt etter minstefradrag og personfradrag — med lav inntekt
+  er det verdt ingenting, og da koster lånet akkurat det som står. Et standardvalg som gjør
+  lån billigere enn det er, er den farlige veien å bomme. Vet du at fradraget gjelder deg,
+  skru det på over.</div>
+  <div class="rull"><table id="bilAltTabell"></table></div>
+  <div id="bilDom"></div>
+</div>
+
+<!-- 1c · effektiv rente -->
+<div class="kort">
+  <b style="font-size:14.5px">Effektiv rente, aldri nominell</b>
+  <div class="rull"><table id="bilStige"></table></div>
+  <p class="status">På små lån dominerer gebyrene: DNB 150&nbsp;000&nbsp;kr gir
+  1,9&nbsp;prosentpoengs sprik mellom nominell og effektiv rente, LOfavør
+  100&nbsp;000&nbsp;kr gir 4,7. Et lån markedsført som 8,45&nbsp;% kan koste 13,1&nbsp;%.
+  Kilde: markedsundersøkelse 18.08.2026.</p>
+</div>
+
+<!-- 1d · forskriften -->
+<div class="kort">
+  <b style="font-size:14.5px">Hva sier utlånsforskriften?</b>
+  <div class="felt"><label>Brutto årsinntekt (kr)</label><input id="bilLonn" inputmode="numeric"></div>
+  <div class="felt"><label>Gjeld fra før (kr)</label><input id="bilGjeldFoer" inputmode="numeric"></div>
+  <div class="felt"><label>Billånets rente, nominell (%)</label><input id="bilNom" inputmode="decimal"></div>
+  <div class="felt"><label>Løpetid (år)</label><input id="bilLopetid" inputmode="numeric"></div>
+  <div class="rull"><table id="bilForskrift"></table></div>
+  <p class="status">Rentefrie lån teller <b>like mye</b> i 5×-taket som dyre lån — de koster
+  ingenting i kroner og alt i handlingsrom. Stresstesten er den høyeste av 7&nbsp;% og dagens
+  rente + 3 prosentpoeng.</p>
+</div>
+
+<!-- 1e · Tromsø-bommen -->
+<div class="kort">
+  <b style="font-size:14.5px">Tromsø-bommen</b>
+  <div class="felt"><label>Pendlerdager per måned</label><input id="bilBomDager" inputmode="numeric"></div>
+  <div class="felt"><label>Egne bomtall, overstyr (kr/mnd)</label><input id="bilBomEgen" inputmode="numeric" placeholder="valgfritt"></div>
+  <div class="rull"><table id="bilBomTabell"></table></div>
+  <p class="status">Rushtid hverdager 06:30–09:00 og 15:00–17:00 koster 3× vanlig takst.
+  Timesregel: én belastning per time. Månedstak: 80 passeringer. Gasskjøretøy fritas helt
+  fra 1. september 2026. Nasjonalt snitt til sammenlikning: 2&nbsp;000–4&nbsp;500 kr/år (OFV).
+  <b>Forskjellen mellom elbil og bensin er 28 kr i måneden — fordelen er borte.</b></p>
+</div>
+
+<!-- 1f · elbil mot bensin -->
+<div class="kort">
+  <b style="font-size:14.5px">Elbil mot bensin, ærlig</b>
+  <div class="felt"><label>Kjørelengde (km/år)</label><input id="bilKm" inputmode="numeric"></div>
+  <div class="felt"><label>Elbilens pris uten mva (kr)</label><input id="bilMomsPris" inputmode="numeric"></div>
+  <div class="rull"><table id="bilElTabell"></table></div>
+  <p class="status">Vinterrekkevidde: NAFs vintertest februar 2026 ga 38&nbsp;% snittap mot
+  WLTP, målt −7 til −32&nbsp;°C. For Tromsø: budsjett <b>35–45&nbsp;% tap om vinteren og
+  15–20&nbsp;% om sommeren</b> — ikke ett årssnitt. Drivstoffposten er den store, og alene
+  nok til å bære konklusjonen.</p>
+</div>
+
+<!-- 1g · undervannskurven -->
+<div class="kort">
+  <b style="font-size:14.5px">Når lånet er større enn bilen</b>
+  <div class="chips">
+    <button class="chip på" id="bilAlderNy" onclick="bilSettAlder('ny')">Kjøpt ny</button>
+    <button class="chip" id="bilAlderBrukt" onclick="bilSettAlder('brukt')">Kjøpt 4 år gammel</button>
+  </div>
+  <svg class="bilgraf" id="bilUvGraf" height="210"></svg>
+  <p class="status" id="bilUvSvar"></p>
+  <div class="notis"><b>Medlåntaker eller kausjonist?</b> En medlåntaker har likt ansvar fra
+  dag én, og hele billånet lander i medlåntakerens egen 5×-beregning. En kausjonist er
+  reserve — banken må gå på låntakeren først. Kausjon reguleres av finansavtaleloven
+  kapittel&nbsp;6 (i kraft 1.1.2023, ikke 1999-loven mange guider siterer): långiveren har
+  forklarings- og kredittvurderingsplikt overfor kausjonisten (§&nbsp;6-1), og
+  kausjonsansvarets omfang skal opplyses skriftlig (§&nbsp;3-36). Ordlyden er lest på
+  Lovdata 22.08.2026. Det skraverte området over er gapet kausjonisten reelt dekker.</div>
+</div>
+
+<!-- 1h · forsikring -->
+<div class="kort">
+  <b style="font-size:14.5px">Forsikring — lim inn et ekte tilbud</b>
+  <div class="felt"><label>Faktisk tilbud (kr/år)</label><input id="bilForsikring" inputmode="numeric" placeholder="fra selskapet"></div>
+  <p class="status" id="bilForsikringSvar"></p>
+  <div class="notis"><b>Verktøyet estimerer ikke denne posten.</b> Anslag bommer med
+  titusener for en ung fører, og kasko er et <b>lånevilkår</b> ved salgspant — da gjelder
+  ikke de billige ansvar-bare-tallene. Rammer, tydelig merket
+  <button type="button" class="anslag" aria-expanded="false" onclick="anslagToggle(this)">anslag</button><span class="anslagTekst">
+  — nasjonalt snitt ~15&nbsp;600 kr/år; under 25 med kun ansvar 8&nbsp;000–12&nbsp;000;
+  ung fører-egenandel 10&nbsp;000–15&nbsp;000 ved skade; ung fører med kasko i Tromsø
+  15&nbsp;000–25&nbsp;000, der det siste tallet IKKE har publisert norsk kilde.</span></div>
+</div>
+
+<!-- 1i · leasing -->
+<div class="kort">
+  <b style="font-size:14.5px">Privatleasing — en innsats på verditapet</b>
+  <div class="notis">Leasing er en innsats på verditapet, overført til leasingselskapet mot
+  en risikopremie (Forbrukerrådet). Fellene, hver for seg:<br>
+  • dyre avtaler — totalprisen skjules av at startleien glemmes<br>
+  • hoppet service — avtalen krever full historikk, ellers betaler du<br>
+  • tap av startleien ved tyveri eller kondemnering<br>
+  • dyr førtidig oppsigelse — du eier ingenting å selge deg ut med<br>
+  • kilometergrense, typisk 15&nbsp;000/år — 2–3 kr per km over<br>
+  • påkost ved levering for riper og slitasje<br>
+  • 25&nbsp;% moms på leasingterminen for elbil</div>
+  <div class="notis"><b>Uavklart, og det skal stå at det er uavklart:</b> om en
+  privatleasing-forpliktelse havner i 5×-gjeldsgraden eller bare i betjeningsevnen.
+  Utlånsforskriften teller «samlet gjeld», og ordet leasing finnes ikke i forskriften
+  (Lovdata, lest 22.08.2026) — men bankenes praksis er ikke bekreftet. Havner den bare i
+  betjeningsevnen, er det et <b>regulatorisk smutthull, ikke en økonomisk besparelse</b>:
+  terminen betales hver måned uansett.</div>
 </div>
 
 <footer>
@@ -902,6 +1071,254 @@ function tegnNB(){
 /* ═════════ 10 · oppstart ═════════ */
 /* Lyst er standard — også for de som kjører mørk modus på systemet. Mørkt er
    alternativ nr. 2, ett trykk unna. Har brukeren valgt selv, gjelder valget. */
+/* ═════════ 9 · bilkjøp (22.08.2026) ═════════
+   Egen tilstand i localStorage-nøkkelen rr_bil — rr_data røres ikke.
+   Ingen eksisterende formel er endret; alt her er nytt og selvforsynt. */
+const BIL_STD={pris:250000,aar:5,kontant:0,buffer:0,faste:15000,sparing:0,
+  fgRente:5.5,fradrag:false,lonn:600000,gjeldFoer:0,nom:8.40,lopetid:5,
+  bomDager:21,bomEgen:'',km:15000,momsPris:450000,forsikring:'',alder:'brukt'};
+let BIL=Object.assign({},BIL_STD,Lager.les('rr_bil')||{});
+const bilLagre=()=>Lager.skriv('rr_bil',BIL);
+
+/* Verditap (OFV): punktene eksakte, rett strek mellom, samme takt etter siste punkt. */
+const BIL_TAP={ny:[[0,1],[12,.80],[36,.60],[60,.47]],brukt:[[0,1],[12,.83],[36,.66]]};
+function bilVerdi(alder,mnd){
+  const p=BIL_TAP[alder];
+  for(let i=1;i<p.length;i++) if(mnd<=p[i][0]){
+    const [m0,v0]=p[i-1],[m1,v1]=p[i]; return v0+(v1-v0)*(mnd-m0)/(m1-m0); }
+  const [m0,v0]=p[p.length-2],[m1,v1]=p[p.length-1];
+  return Math.max(0,v1+(v1-v0)/(m1-m0)*(mnd-m1));
+}
+function bilAnnuitet(P,r,n){ return r===0?P/n:P*r/(1-Math.pow(1+r,-n)); }
+function bilRest(P,r,n,k){ if(k>=n) return 0; if(r===0) return P*(1-k/n);
+  const t=bilAnnuitet(P,r,n); return P*Math.pow(1+r,k)-t*(Math.pow(1+r,k)-1)/r; }
+/* Effektiv av nominell + gebyr (etab 2500, termingebyr 85 som markedsramme). Ren matte. */
+function bilEffektiv(P,nomAar,n,etab,geb){
+  if(P<=0) return 0;
+  const term=bilAnnuitet(P,nomAar/12,n)+ (geb||0), ut=P-(etab||0);
+  let lo=0,hi=1;
+  for(let i=0;i<70;i++){ const m=(lo+hi)/2; let pv=0;
+    for(let k=1;k<=n;k++) pv+=term/Math.pow(1+m,k);
+    if(pv>ut) lo=m; else hi=m; }
+  return (Math.pow(1+(lo+hi)/2,12)-1)*100;
+}
+
+function anslagToggle(b){ b.setAttribute('aria-expanded', b.getAttribute('aria-expanded')!=='true'); }
+function bilAnslag(tekst){
+  return '<button type="button" class="anslag" aria-expanded="false" '+
+    'onclick="anslagToggle(this)">anslag</button><span class="anslagTekst"> — '+tekst+'</span>';
+}
+
+/* Bom: takstene etter rabattkuttet 30.06.2026 (fra 50 % ekstra rabatt/60 % total til
+   30 % ekstra/44 % total). 1 383 er UTLEDET fra det gamle profiltallet 988 kr/mnd med ny
+   rabattsats — det er IKKE lest ut av takstregulativet. Utledningen gjort 22.08.2026.
+   Profil: to rushpasseringer per dag, 21 dager i måneden. */
+const BIL_BOM={elbil:1383,bensin:1411,profilDager:21};
+
+function bilTegnTap(){
+  const pris=num(BIL.pris), N=Math.max(12,Math.round(num(BIL.aar)*12));
+  const svg=$('bilTapGraf'); if(!svg||pris<=0){ if(svg) svg.innerHTML=''; return; }
+  const W=svg.clientWidth||358,H=210,P={t:14,r:12,b:24,l:46};
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const x=i=>P.l+(W-P.l-P.r)*i/N, y=v=>P.t+(H-P.t-P.b)*(1-v/(pris*1.04));
+  const kurve=a=>Array.from({length:N+1},(_,k)=>(k?'L':'M')+x(k).toFixed(1)+' '+
+    y(pris*bilVerdi(a,k)).toFixed(1)).join(' ');
+  let g='';
+  for(let k=0;k<=N;k+=12) g+=`<text x="${x(k)}" y="${H-6}" fill="${css('--ink3')}" font-size="10" text-anchor="middle">år ${k/12}</text>`;
+  [0,.25,.5,.75,1].forEach(f=>{ g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${y(pris*f)}" y2="${y(pris*f)}" stroke="${css('--flate3')}"/>
+    <text x="${P.l-6}" y="${y(pris*f)+3}" fill="${css('--ink3')}" font-size="9.5" text-anchor="end">${tall(pris*f/1000)}k</text>`; });
+  svg.innerHTML=g+`<path d="${kurve('ny')}" fill="none" stroke="${css('--kritisk')}" stroke-width="2"/>
+    <path d="${kurve('brukt')}" fill="none" stroke="${css('--god')}" stroke-width="2"/>`;
+  const slNy=pris*bilVerdi('ny',N), slBr=pris*bilVerdi('brukt',N);
+  $('bilTapKort').innerHTML=`
+    <div class="res"><div class="l">Kjøpt ny</div><div class="v">−${tall(pris-slNy)}</div>
+      <div class="d">i verditap — verdt ${kr(slNy)} igjen</div></div>
+    <div class="res"><div class="l">Kjøpt 4 år gammel</div><div class="v">−${tall(pris-slBr)}</div>
+      <div class="d">i verditap — verdt ${kr(slBr)} igjen</div></div>
+    <div class="res"><div class="l">Forskjellen</div><div class="v">${tall(slBr-slNy)}</div>
+      <div class="d">spart ved brukt til samme pris</div></div>`;
+}
+
+function bilTegnValg(){
+  const pris=num(BIL.pris), kontant=num(BIL.kontant), buffer=num(BIL.buffer);
+  const faste=num(BIL.faste), sparing=num(BIL.sparing), fg=num(BIL.fgRente);
+  const n=Math.max(1,Math.round(num(BIL.lopetid)))*12;
+  const behov=Math.max(0,pris-kontant);
+  const eff=bilEffektiv(behov>0?behov:pris,num(BIL.nom)/100,n,2500,85);
+  const skatt=r=>BIL.fradrag? r*0.78 : r;
+  const fgStd=Math.abs(fg-BIL_STD.fgRente)<0.001;
+  $('bilFgMerke').innerHTML= fgStd
+    ? bilAnslag('5,5 % er et rent anslag — og det er både hele renterisikoen og '+
+        'referansepunktet i tabellen under. Overstyr med din egen sats over, så forsvinner merket.')
+    : 'Egen sats lagt inn — anslagsmerket er fjernet.';
+  const arv=fgStd? ' '+bilAnslag('bygger på anslått fellesgjeldsrente 5,5 %.') : '';
+  $('bilAltTabell').innerHTML=`
+    <tr><th>Én krone brukt på</th><th>Nominelt</th><th>${BIL.fradrag?'Etter skatt (22 %)':'Etter skatt (fradrag: 0)'}</th></tr>
+    <tr><td>Nedbetale rentefritt lån — <b>aldri først</b></td><td>${pst(0)}</td><td>${pst(0)}</td></tr>
+    <tr class="best"><td>Nedbetale fellesgjeld${arv}</td><td>${pst(fg)}</td><td>${pst(skatt(fg))}</td></tr>
+    <tr><td>Slippe billånet (effektiv)</td><td>${pst(eff)}</td><td>${pst(skatt(eff))}</td></tr>
+    <tr><td>Bankinnskudd</td><td>3,00–4,00 %</td><td>${BIL.fradrag?'2,34–3,12 %':'3,00–4,00 %'}</td></tr>`;
+  const krav=2*faste, anbefalt=3*faste;
+  let dom;
+  if(pris<=0) dom='<p class="status">Legg inn bilens pris øverst i bil-delen.</p>';
+  else if(buffer<krav)
+    dom=`<div class="sperre"><b>Ingen anbefaling før bufferen er på plass.</b>
+      Minst to måneders faste utgifter — ${kr(krav)} — skal stå urørt før en krone går til
+      bil; tre måneder (${kr(anbefalt)}) er anbefalingen. Du har lagt inn ${kr(buffer)}.
+      Uten buffer er én ødelagt girkasse veien inn i et forbrukslån til 10,7–12,7 %.</div>`;
+  else{
+    const vent=12, spart=kontant+sparing*vent;
+    dom='<div class="notis"><b>Tre veier, samme lommebok:</b><br>'+
+      (kontant>=pris
+        ?`<b>Kontant:</b> ${kr(pris)} nå, ${kr(kontant-pris)} igjen — alternativkostnad ${pst(skatt(fg))}${fgStd?' (anslått sats)':''} mot ${pst(skatt(eff))} for lånet.<br>`
+        :`<b>Kontant:</b> rekker ikke — du har ${kr(kontant)} av ${kr(pris)}.<br>`)+
+      (behov>0?`<b>Lån ${kr(behov)}:</b> ${kr(bilAnnuitet(behov,num(BIL.nom)/100/12,n)+85)}/mnd i ${BIL.lopetid} år, effektiv rente ${pst(eff)}.<br>`:'')+
+      `<b>Ikke ennå:</b> med ${kr(sparing)}/mnd har du ${kr(spart)} om ${vent} måneder`+
+      `${spart>=pris?' — nok til å betale kontant':''}, lånebehovet er ${kr(Math.max(0,pris-spart))},`+
+      ` og verditapet i ventetiden er det noen andre som tar. Et likeverdig svar, ikke et nederlag.</div>`;
+  }
+  $('bilDom').innerHTML=dom;
+}
+
+function bilTegnStige(){
+  $('bilStige').innerHTML=`
+    <tr><th>Lånetype</th><th>Effektiv rente</th></tr>
+    <tr><td>Boliglån, 60 % belåning</td><td>5,07–5,15 %</td></tr>
+    <tr><td>Billån m/salgspant, 35 % egenkapital</td><td>7,02 %</td></tr>
+    <tr><td>Billån ung, 100 % finansiering, 150k/5 år</td><td>8,40 %</td></tr>
+    <tr><td>Kaskofritt småbillån, 100k/5 år</td><td>13,1 %</td></tr>
+    <tr><td>Forbrukslån</td><td>10,7–12,7 %</td></tr>`;
+}
+
+function bilTegnForskrift(){
+  const lonn=num(BIL.lonn), foer=num(BIL.gjeldFoer);
+  const behov=Math.max(0,num(BIL.pris)-num(BIL.kontant));
+  const gjeld=foer+behov, tak=lonn*5, grad=lonn>0?gjeld/lonn:0;
+  const stress=Math.max(7, num(BIL.nom)+3);
+  const n=Math.max(1,Math.round(num(BIL.lopetid)))*12;
+  const stressTerm=bilAnnuitet(behov,stress/100/12,n);
+  $('bilForskrift').innerHTML=`
+    <tr><th>Hva</th><th>Verdi</th><th>Grense</th><th>Status</th></tr>
+    <tr><td>Samlet gjeld med billånet</td><td>${kr(gjeld)}</td><td>${kr(tak)}</td>
+      <td><span class="merkelapp ${gjeld>tak?'kritisk':'god'}">${gjeld>tak?'over taket':'innenfor'}</span></td></tr>
+    <tr><td>Gjeldsgrad</td><td>${grad.toLocaleString('no-NO',{maximumFractionDigits:2})}×</td><td>5×</td>
+      <td><span class="merkelapp ${grad>5?'kritisk':'god'}">${grad>5?'krever mer sikkerhet':'ok'}</span></td></tr>
+    <tr><td>Terminen ved stressrente ${pst(stress)}</td><td>${kr(stressTerm)}/mnd</td>
+      <td>betjeningsevne</td><td><span class="merkelapp god">max(7 %, rente + 3 pp)</span></td></tr>`;
+}
+
+function bilTegnBom(){
+  const egen=String(BIL.bomEgen).trim()!==''&&num(BIL.bomEgen)>0;
+  const dager=num(BIL.bomDager)||BIL_BOM.profilDager;
+  const skala=v=>v/BIL_BOM.profilDager*dager;
+  const el=egen?num(BIL.bomEgen):skala(BIL_BOM.elbil), be=egen?num(BIL.bomEgen):skala(BIL_BOM.bensin);
+  const merke=egen?'Egne tall lagt inn — anslagsmerket er fjernet.'
+    :bilAnslag('utledet 22.08.2026 fra det gamle profiltallet 988 kr/mnd med ny rabattsats '+
+      '(elbilrabatten kuttet 30.06.2026 fra 50 % ekstra til 30 % ekstra, 60 % → 44 % total) '+
+      '— ikke lest ut av takstregulativet. Konklusjonstallene i tabellen arver merket.');
+  $('bilBomTabell').innerHTML=`
+    <tr><th>Med brikke</th><th>Per måned</th><th>Per år</th></tr>
+    <tr><td>Elbil</td><td>${kr(el)}</td><td>${kr(el*12)}</td></tr>
+    <tr><td>Bensin</td><td>${kr(be)}</td><td>${kr(be*12)}</td></tr>
+    <tr class="sum"><td>Differansen</td><td colspan="2">${kr(be-el)}/mnd ${merke}</td></tr>`;
+}
+
+function bilTegnEl(){
+  const km=num(BIL.km)||15000, pris=num(BIL.momsPris);
+  const driv=v=>v/15000*km;
+  const grunnlag=Math.max(0,pris-300000), moms=grunnlag*0.25;
+  $('bilElTabell').innerHTML=`
+    <tr><th>Post per år</th><th>Elbil</th><th>Bensin/diesel</th></tr>
+    <tr><td>Drivstoff (${tall(km)} km, OFV)</td><td>${kr(driv(3378))}</td><td>${kr(driv(15362))} <span class="status">(diesel)</span></td></tr>
+    <tr><td>Trafikkforsikringsavgift — <b>elbilen betaler mer</b></td><td>${kr(9.16*365)}</td><td>${kr(6.52*365)}</td></tr>
+    <tr><td>Bomringen (profilen over)</td><td colspan="2">28 kr/mnd i forskjell — fordelen er borte</td></tr>
+    <tr class="sum"><td>Moms på elbil til ${kr(pris)}</td><td colspan="2">moms av ${kr(grunnlag)} = ${kr(moms)}
+      ${bilAnslag('grensa falt fra 500 000 til 300 000 kr 1.1.2026, varslet videre til 150 000 i 2027 '+
+      'og 0 i 2028 — beskrevet som avtale mellom Ap og støttepartiene, IKKE endelig bekreftet mot '+
+      'Skatteetaten. Momstallet arver merket.')}</td></tr>`;
+}
+
+function bilSettAlder(a){ BIL.alder=a; bilLagre();
+  $('bilAlderNy').classList.toggle('på',a==='ny');
+  $('bilAlderBrukt').classList.toggle('på',a==='brukt'); bilTegnUv(); }
+
+function bilTegnUv(){
+  const pris=num(BIL.pris), behov=Math.max(0,pris-num(BIL.kontant));
+  const n=Math.max(1,Math.round(num(BIL.lopetid)))*12;
+  const svg=$('bilUvGraf'); if(!svg) return;
+  if(pris<=0||behov<=0){ svg.innerHTML='';
+    $('bilUvSvar').textContent=pris>0?'Uten lån finnes det ikke noe undervann — kurven gjelder lånt del.':''; return; }
+  const eff=bilEffektiv(behov,num(BIL.nom)/100,n,2500,85)/100, r=Math.pow(1+eff,1/12)-1;
+  const gj=[],vd=[]; for(let k=0;k<=n;k++){ gj.push(bilRest(behov,r,n,k)); vd.push(pris*bilVerdi(BIL.alder,k)); }
+  const W=svg.clientWidth||358,H=210,P={t:14,r:12,b:24,l:46};
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const hi=Math.max(...gj,...vd)*1.05;
+  const x=i=>P.l+(W-P.l-P.r)*i/n, y=v=>P.t+(H-P.t-P.b)*(1-v/hi);
+  const sti=a=>a.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+  let skygge='',start=null,maks=0,mnd=0,under=0;
+  const omr=(a,b)=>{ let d='M'+x(a)+' '+y(gj[a]);
+    for(let k=a;k<=b;k++) d+='L'+x(k)+' '+y(gj[k]);
+    for(let k=b;k>=a;k--) d+='L'+x(k)+' '+y(vd[k]);
+    return `<path d="${d}Z" fill="${css('--kritisk')}" fill-opacity=".14"/>`; };
+  for(let k=0;k<=n;k++){ const gap=gj[k]-vd[k];
+    if(gap>0){ if(start===null) start=k; if(gap>maks){maks=gap;mnd=k;} under++; }
+    else if(start!==null){ skygge+=omr(start,k); start=null; } }
+  if(start!==null) skygge+=omr(start,n);
+  let g=skygge;
+  for(let k=0;k<=n;k+=12) g+=`<text x="${x(k)}" y="${H-6}" fill="${css('--ink3')}" font-size="10" text-anchor="middle">år ${k/12}</text>`;
+  svg.innerHTML=g+`<path d="${sti(vd)}" fill="none" stroke="${css('--god')}" stroke-width="2"/>
+    <path d="${sti(gj)}" fill="none" stroke="${css('--kritisk')}" stroke-width="2"/>
+    <text x="${W-P.r}" y="${y(vd[n])-5}" fill="${css('--god')}" font-size="10.5" text-anchor="end">bilens verdi</text>
+    <text x="${W-P.r}" y="${y(gj[n])+12}" fill="${css('--kritisk')}" font-size="10.5" text-anchor="end">restgjeld</text>`;
+  $('bilUvSvar').textContent= maks>0
+    ? `Under vann i ${under} måneder; som mest er lånet ${kr(maks)} større enn bilen (måned ${mnd}). Det gapet — ikke hele lånet — er det en kausjonist reelt dekker.`
+    : 'Lånet er aldri større enn bilens verdi med disse tallene.';
+}
+
+function bilTegnForsikring(){
+  const f=num(BIL.forsikring);
+  $('bilForsikringSvar').innerHTML=f>0
+    ? `${kr(f)} i året er ${kr(f/12)}/mnd — legg den ved siden av lån og drift.`
+    : '<span class="merkelapp kritisk">mangler tilbud</span> Totalkostnaden er ufullstendig til et ekte tilbud er lagt inn.';
+}
+
+function bilTegnAlt(){ bilTegnTap(); bilTegnValg(); bilTegnStige(); bilTegnForskrift();
+  bilTegnBom(); bilTegnEl(); bilTegnUv(); bilTegnForsikring(); }
+
+(function bilInit(){
+  const felter=[['bilPris','pris'],['bilAar','aar'],['bilKontant','kontant'],['bilBuffer','buffer'],
+    ['bilFaste','faste'],['bilSparing','sparing'],['bilFgRente','fgRente'],['bilLonn','lonn'],
+    ['bilGjeldFoer','gjeldFoer'],['bilNom','nom'],['bilLopetid','lopetid'],['bilBomDager','bomDager'],
+    ['bilBomEgen','bomEgen'],['bilKm','km'],['bilMomsPris','momsPris'],['bilForsikring','forsikring']];
+  felter.forEach(([id,k])=>{ const el=$(id); if(!el) return;
+    el.value=BIL[k];
+    el.addEventListener('input',()=>{ BIL[k]=el.value; bilLagre(); bilTegnAlt(); }); });
+  const frad=$('bilFradrag'); if(frad){ frad.checked=!!BIL.fradrag;
+    frad.addEventListener('change',()=>{ BIL.fradrag=frad.checked; bilLagre(); bilTegnAlt(); }); }
+  bilSettAlder(BIL.alder==='ny'?'ny':'brukt');
+  bilTegnAlt();
+  addEventListener('resize',()=>{ bilTegnTap(); bilTegnUv(); });
+})();
+
+/* ═════════ 10 · Finansportalen — forberedt, IKKE koblet ═════════
+   Gjenbruk krever signert distribusjonsavtale (Forbrukerrådet). Avtalen er ikke signert,
+   og derfor sendes det INGEN forespørsler herfra — flagget under er av, og ingenting
+   kaller inntaket. BEVISST unntak fra regelen om at kode skal ha kallsted: kallstedet
+   skrives den dagen avtalen er signert. Serverens /radar/api/renter mates i dag av en
+   håndført fil (private/banker.json) — ikke av Finansportalens API. */
+const FINANSPORTALEN_KOBLET=false;
+/* Grensesnittet inntaket skal levere til resten av verktøyet: samme form som BANKER.
+   Validerer og normaliserer; kaster ved ukjent form i stedet for å gjette. */
+function finansportalenInntak(json){
+  if(!FINANSPORTALEN_KOBLET) throw new Error('Finansportalen er ikke koblet — avtale ikke signert');
+  if(!json||!Array.isArray(json.banker)) throw new Error('Ukjent form fra Finansportalen');
+  return json.banker.map(b=>{
+    if(typeof b.navn!=='string'||!isFinite(b.nominell)||!isFinite(b.effektiv))
+      throw new Error('Ugyldig bankrad fra Finansportalen');
+    return [b.navn,Number(b.nominell),Number(b.effektiv),b.kategori||'vanlig',b.gjelder||''];
+  });
+}
+
 settTema(Lager.les('rr_tema') || 'lys');
 document.querySelectorAll('input[type=range]').forEach(el=>
   el.addEventListener('input',()=>{ oppdaterSpor(); tegnAlt(); }));
