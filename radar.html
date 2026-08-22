@@ -152,8 +152,21 @@ footer a{color:var(--c1)}
 .anslag{background:var(--varselBg);color:var(--varsel);border:1px solid var(--varsel);
   border-radius:99px;font-size:10.5px;font-weight:800;padding:1px 8px;cursor:pointer;
   vertical-align:2px;font-family:inherit}
-.anslagTekst{display:none;font-size:12px;color:var(--ink2)}
+.anslagTekst{display:none;font-size:12px;color:var(--ink2);white-space:normal}
 .anslag[aria-expanded="true"]+.anslagTekst{display:inline}
+/* I en tabell har td white-space:nowrap. Uten dette sprengte en utfoldet
+   anslagstekst tabellbredden, og tallene ble skjovet ut av skjermen paa telefon. */
+/* Etikettkolonnen i bil-tabellene far bryte. Med white-space:nowrap presset lange
+   etiketter tallkolonnene ut av skjermen paa telefon — man matte dra sidelengs for
+   a se tallene, som er hele poenget med tabellen. */
+#bilAltTabell td:first-child,#bilForskrift td:first-child,
+#bilElTabell td:first-child,#bilBomTabell td:first-child,
+#bilStige td:first-child{white-space:normal;min-width:9.5em}
+/* Samme grunn: en forklarende .status inne i en celle skjov tallkolonnene ut. */
+td .status{display:block;white-space:normal;max-width:19em;text-align:left;margin-top:3px}
+td .anslag[aria-expanded="true"]+.anslagTekst,
+th .anslag[aria-expanded="true"]+.anslagTekst{
+  display:block;max-width:26em;text-align:left;margin-top:5px;line-height:1.45}
 .bilgraf{width:100%;display:block}
 .sperre{border-left:3px solid var(--kritisk);background:var(--kritiskBg);color:var(--ink);
   border-radius:0 10px 10px 0;padding:11px 14px;font-size:13px;margin:10px 0}
@@ -170,7 +183,7 @@ footer a{color:var(--c1)}
 <div class="side">
 
 <div class="topp">
-  <div class="merke"><div class="logo"></div><h1>Renteradar</h1><span class="versjon" id="versjon">v22.08.2026 · bil1</span></div>
+  <div class="merke"><div class="logo"></div><h1>Renteradar</h1><span class="versjon" id="versjon">v22.08.2026 · bil3</span></div>
   <button class="ikonknapp" id="temaKnapp" onclick="byttTema()">Mørkt</button>
 </div>
 <p class="undertittel">Regn på boliglån, deleie og leie i samme verktøy.
@@ -309,8 +322,14 @@ Så lån mot kontant, forskriften, Tromsø-bommen og resten. Alt regnes lokalt.<
   <div class="rutenett" id="bilTapKort" style="margin-top:10px"></div>
   <p class="status">Ny bil: −20 % etter ett år, −40 % etter tre, −53 % etter fem.
   Kjøpt fire år gammel: −17 % etter ett år, −34 % etter tre (OFV). Mellom punktene er
-  kurven trukket rett; etter siste punkt fortsetter den i samme takt — ekstrapolert,
-  ikke målt.</p>
+  kurven trukket rett. <b>Etter siste målepunkt stopper kurven</b> — 5 år for ny bil,
+  3 år for brukt. Der finnes ingen tall, og da tegner verktøyet ingenting heller.</p>
+  <div class="notis"><b>Hvorfor akkurat fire år gammel?</b> Fire år er ikke et valg —
+  det er den bruktbilalderen OFV publiserer en verditapskurve for. De to kurvene lar seg
+  ikke regne om til hverandre: ny-kurven tilsier at en fireåring taper rundt 12
+  prosentpoeng det neste året, mens OFVs bruktkurve sier 17 %. Ulike utvalg, ulike tall.
+  Kjøper du en bil på tre eller fem år, er fireårskurven nærmeste treff — og tallene da
+  omtrentlige.</div>
 </div>
 
 <!-- 1b · kontant mot lån -->
@@ -339,10 +358,16 @@ Så lån mot kontant, forskriften, Tromsø-bommen og resten. Alt regnes lokalt.<
 <div class="kort">
   <b style="font-size:14.5px">Effektiv rente, aldri nominell</b>
   <div class="rull"><table id="bilStige"></table></div>
-  <p class="status">På små lån dominerer gebyrene: DNB 150&nbsp;000&nbsp;kr gir
-  1,9&nbsp;prosentpoengs sprik mellom nominell og effektiv rente, LOfavør
-  100&nbsp;000&nbsp;kr gir 4,7. Et lån markedsført som 8,45&nbsp;% kan koste 13,1&nbsp;%.
-  Kilde: markedsundersøkelse 18.08.2026.</p>
+  <p class="status">På små lån dominerer gebyrene: undersøkelsen 18.08.2026 fant
+  1,9&nbsp;prosentpoengs sprik mellom nominell og effektiv rente på DNBs 150&nbsp;000&nbsp;kr,
+  og 4,7 på LOfavørs 100&nbsp;000. Med gebyrene verktøyet regner med (2&nbsp;500 + 85) blir
+  spriket 2,2&nbsp;pp på samme lån — differansen er gebyrantakelsen, ikke renta. Et lån
+  markedsført som 8,45&nbsp;% kan koste 13,1&nbsp;%.</p>
+  <div class="notis"><b>Merk hva 8,40&nbsp;% er.</b> Tallet i raden over er DNBs
+  <b>effektive</b> rente på 150k over fem år. Feltet «Billånets rente, nominell» lenger
+  nede skal derfor ha den <b>nominelle</b> — rundt 6,2&nbsp;% med gebyrene brukt her
+  (2&nbsp;500 kr etablering, 85 kr per termin). Legger du 8,40 inn som nominell, regner
+  verktøyet gebyrene to ganger og svarer 10,8&nbsp;%. Det var feilen fram til 22.08.2026.</div>
 </div>
 
 <!-- 1d · forskriften -->
@@ -360,14 +385,33 @@ Så lån mot kontant, forskriften, Tromsø-bommen og resten. Alt regnes lokalt.<
 
 <!-- 1e · Tromsø-bommen -->
 <div class="kort">
-  <b style="font-size:14.5px">Tromsø-bommen</b>
+  <b style="font-size:14.5px">Bompenger</b>
+  <p class="status" style="margin:4px 0 10px">Det finnes ingen nasjonal bomtakst — hver
+  bomring setter sin egen. Legg inn taksten der du bor, så regner verktøyet resten.
+  <button type="button" class="chip" onclick="bilBomTromso()" style="margin-left:6px">Fyll inn Tromsø</button></p>
+  <div class="felt"><label>Passeringstakst, vanlig (kr)</label><input id="bilBomTakst" inputmode="decimal"></div>
+  <div class="felt"><label>Rushtidspåslag (× vanlig takst)</label><input id="bilBomRush" inputmode="decimal"></div>
+  <div class="felt"><label>Rushpasseringer per dag</label><input id="bilBomRushPass" inputmode="numeric"></div>
+  <div class="felt"><label>Øvrige passeringer per dag</label><input id="bilBomAnnenPass" inputmode="numeric"></div>
   <div class="felt"><label>Pendlerdager per måned</label><input id="bilBomDager" inputmode="numeric"></div>
-  <div class="felt"><label>Egne bomtall, overstyr (kr/mnd)</label><input id="bilBomEgen" inputmode="numeric" placeholder="valgfritt"></div>
+  <div class="felt"><label>Brikkerabatt (%)</label><input id="bilBomBrikke" inputmode="decimal"></div>
+  <div class="felt"><label>Elbilrabatt, totalt (%)</label><input id="bilBomEl" inputmode="decimal"></div>
+  <div class="felt"><label>Månedstak (passeringer)</label><input id="bilBomTak" inputmode="numeric" placeholder="tomt = ingen"></div>
+  <div class="felt"><label>Eller: overstyr med kr/mnd</label><input id="bilBomEgen" inputmode="numeric" placeholder="valgfritt"></div>
   <div class="rull"><table id="bilBomTabell"></table></div>
-  <p class="status">Rushtid hverdager 06:30–09:00 og 15:00–17:00 koster 3× vanlig takst.
-  Timesregel: én belastning per time. Månedstak: 80 passeringer. Gasskjøretøy fritas helt
-  fra 1. september 2026. Nasjonalt snitt til sammenlikning: 2&nbsp;000–4&nbsp;500 kr/år (OFV).
-  <b>Forskjellen mellom elbil og bensin er 28 kr i måneden — fordelen er borte.</b></p>
+  <p class="status"><b>Det eneste som gjelder hele landet:</b> elbil skal betale maksimalt
+  70&nbsp;% av vanlig passeringstakst (NAF). Brikkerabatt og elbilrabatt settes ellers per
+  bompengeprosjekt — de 20&nbsp;% mange kjenner er Fjellinjens tilbud i Oslo, ikke en
+  nasjonal regel. Nasjonalt snitt til sammenlikning: 2&nbsp;000–4&nbsp;500 kr/år (OFV).
+  <span id="bilBomSetning"></span></p>
+  <div class="notis"><b>Tromsø som eksempel.</b> Vanlig takst 14&nbsp;kr, rushtid 42&nbsp;kr
+  (3×) hverdager 06:30–09:00 og 15:00–17:00. Brikkerabatt 20&nbsp;%; elbil 44&nbsp;% totalt
+  etter at rabatten ble kuttet 30.06.2026 (var 60&nbsp;%). Timesregel: én belastning per time.
+  Månedstak 80 passeringer. Gasskjøretøy fritas helt fra 1. september 2026.
+  Kilder: tenktromso.no og bompengeappen.no, lest 22.08.2026.<br><br>
+  Med to rushpasseringer om dagen i 21 dager gir det 1&nbsp;764&nbsp;kr/mnd før rabatt —
+  <b>988&nbsp;kr for elbil mot 1&nbsp;411&nbsp;kr for bensin, 423&nbsp;kr i forskjell.</b>
+  Rushtidspåslaget er det som gjør Tromsø dyrt: fire ganger nasjonalt snitt.</div>
 </div>
 
 <!-- 1f · elbil mot bensin -->
@@ -375,11 +419,13 @@ Så lån mot kontant, forskriften, Tromsø-bommen og resten. Alt regnes lokalt.<
   <b style="font-size:14.5px">Elbil mot bensin, ærlig</b>
   <div class="felt"><label>Kjørelengde (km/år)</label><input id="bilKm" inputmode="numeric"></div>
   <div class="felt"><label>Elbilens pris uten mva (kr)</label><input id="bilMomsPris" inputmode="numeric"></div>
+  <div class="felt"><label>Rekkeviddetap om vinteren (%)</label><input id="bilVintertap" inputmode="decimal"></div>
+  <div class="felt"><label>Rekkeviddetap om sommeren (%)</label><input id="bilSommertap" inputmode="decimal"></div>
   <div class="rull"><table id="bilElTabell"></table></div>
   <p class="status">Vinterrekkevidde: NAFs vintertest februar 2026 ga 38&nbsp;% snittap mot
-  WLTP, målt −7 til −32&nbsp;°C. For Tromsø: budsjett <b>35–45&nbsp;% tap om vinteren og
-  15–20&nbsp;% om sommeren</b> — ikke ett årssnitt. Drivstoffposten er den store, og alene
-  nok til å bære konklusjonen.</p>
+  WLTP, målt −7 til −32&nbsp;°C. Det er nordnorske forhold — <b>standardverdiene i feltene
+  over gjelder Tromsø-klima, og skal settes ned lenger sør.</b> Bruk to satser, ikke ett
+  årssnitt. Drivstoffposten er den store, og alene nok til å bære konklusjonen.</p>
 </div>
 
 <!-- 1g · undervannskurven -->
@@ -391,13 +437,26 @@ Så lån mot kontant, forskriften, Tromsø-bommen og resten. Alt regnes lokalt.<
   </div>
   <svg class="bilgraf" id="bilUvGraf" height="210"></svg>
   <p class="status" id="bilUvSvar"></p>
-  <div class="notis"><b>Medlåntaker eller kausjonist?</b> En medlåntaker har likt ansvar fra
-  dag én, og hele billånet lander i medlåntakerens egen 5×-beregning. En kausjonist er
-  reserve — banken må gå på låntakeren først. Kausjon reguleres av finansavtaleloven
-  kapittel&nbsp;6 (i kraft 1.1.2023, ikke 1999-loven mange guider siterer): långiveren har
-  forklarings- og kredittvurderingsplikt overfor kausjonisten (§&nbsp;6-1), og
-  kausjonsansvarets omfang skal opplyses skriftlig (§&nbsp;3-36). Ordlyden er lest på
-  Lovdata 22.08.2026. Det skraverte området over er gapet kausjonisten reelt dekker.</div>
+  <div class="notis"><b>Medlåntaker eller kausjonist?</b> En <b>medlåntaker</b> har likt
+  ansvar fra dag én. At hele billånet også lander i medlåntakerens egen 5×-beregning er
+  <button type="button" class="anslag" aria-expanded="false" onclick="anslagToggle(this)">ikke bekreftet</button><span class="anslagTekst">
+  — det er slik banker vanligvis regner, men verktøyet har ingen kilde på det, og
+  praksis kan variere. Spør banken direkte før noen signerer.</span><br><br>
+  En <b>kausjonist</b> er reserve — men hvor reserve avhenger av hvilken kausjon som
+  signeres, og <b>det er den ene setningen som avgjør hva en forelder går med på</b>:
+  ved <b>simpel kausjon</b> må banken gå på låntakeren først, mens ved
+  <b>selvskyldnerkausjon</b> kan kausjonisten kreves direkte når terminen misligholdes.
+  Står det «selvskyldner» i erklæringen, er man i praksis medansvarlig fra første
+  ubetalte regning.<br><br>
+  Kausjon reguleres av <b>finansavtaleloven kapittel 6</b> (loven av 18.12.2020, i kraft
+  1.1.2023) — ikke 1999-loven som mange norske nettguider fortsatt siterer. Kapittelet
+  gir långiveren plikter overfor kausjonisten, blant annet om forklaring og
+  kredittvurdering.
+  <button type="button" class="anslag" aria-expanded="false" onclick="anslagToggle(this)">paragrafene</button><span class="anslagTekst">
+  — paragrafnumrene er bevisst utelatt her. En tidligere versjon oppga to numre der det
+  ene lå i et annet kapittel enn teksten påsto, og Lovdata lar seg ikke lese maskinelt,
+  så henvisningen kunne ikke etterprøves. Én setning uten paragraf er bedre enn feil
+  paragraf. Slå opp kapittel 6 på lovdata.no før noe siteres videre.</span></div>
 </div>
 
 <!-- 1h · forsikring -->
@@ -410,8 +469,10 @@ Så lån mot kontant, forskriften, Tromsø-bommen og resten. Alt regnes lokalt.<
   ikke de billige ansvar-bare-tallene. Rammer, tydelig merket
   <button type="button" class="anslag" aria-expanded="false" onclick="anslagToggle(this)">anslag</button><span class="anslagTekst">
   — nasjonalt snitt ~15&nbsp;600 kr/år; under 25 med kun ansvar 8&nbsp;000–12&nbsp;000;
-  ung fører-egenandel 10&nbsp;000–15&nbsp;000 ved skade; ung fører med kasko i Tromsø
-  15&nbsp;000–25&nbsp;000, der det siste tallet IKKE har publisert norsk kilde.</span></div>
+  ung fører-egenandel 10&nbsp;000–15&nbsp;000 ved skade; ung fører med kasko
+  15&nbsp;000–25&nbsp;000, der det siste tallet IKKE har publisert norsk kilde og er
+  anslått for en ung fører uten kjørehistorikk i Nord-Norge — premien varierer sterkt
+  med bosted.</span></div>
 </div>
 
 <!-- 1i · leasing -->
@@ -425,7 +486,10 @@ Så lån mot kontant, forskriften, Tromsø-bommen og resten. Alt regnes lokalt.<
   • dyr førtidig oppsigelse — du eier ingenting å selge deg ut med<br>
   • kilometergrense, typisk 15&nbsp;000/år — 2–3 kr per km over<br>
   • påkost ved levering for riper og slitasje<br>
-  • 25&nbsp;% moms på leasingterminen for elbil</div>
+  • 25&nbsp;% moms på leasingterminen for elbil
+  <button type="button" class="anslag" aria-expanded="false" onclick="anslagToggle(this)">anslag</button><span class="anslagTekst">
+  — ikke bekreftet mot Skatteetaten, på samme måte som momsgrensa for kjøp lenger
+  oppe. Bekreft før du regner på det.</span></div>
   <div class="notis"><b>Uavklart, og det skal stå at det er uavklart:</b> om en
   privatleasing-forpliktelse havner i 5×-gjeldsgraden eller bare i betjeningsevnen.
   Utlånsforskriften teller «samlet gjeld», og ordet leasing finnes ikke i forskriften
@@ -1075,45 +1139,118 @@ function tegnNB(){
    Egen tilstand i localStorage-nøkkelen rr_bil — rr_data røres ikke.
    Ingen eksisterende formel er endret; alt her er nytt og selvforsynt. */
 const BIL_STD={pris:250000,aar:5,kontant:0,buffer:0,faste:15000,sparing:0,
-  fgRente:5.5,fradrag:false,lonn:600000,gjeldFoer:0,nom:8.40,lopetid:5,
-  bomDager:21,bomEgen:'',km:15000,momsPris:450000,forsikring:'',alder:'brukt'};
+  fgRente:5.5,fradrag:false,lonn:600000,gjeldFoer:0,nom:6.18,lopetid:5,
+  bomDager:21,bomEgen:'',bomTakst:14,bomRush:3,bomRushPass:2,bomAnnenPass:0,
+  bomBrikke:20,bomEl:44,bomTak:80,vintertap:38,sommertap:17.5,
+  km:15000,momsPris:450000,forsikring:'',alder:'brukt',
+  anslagAapen:{}};
+/* nom 6,18: markedsundersokelsen oppgir 8,40 % som DNBs EFFEKTIVE rente paa
+   150k/5 aar. Brukt som nominell inndata ga verktoyet 10,79 % — gebyrene ble
+   talt to ganger. 6,18 % nominell gir noyaktig 8,40 % effektiv med etab 2500
+   og termingebyr 85. Rettet 22.08.2026. */
 let BIL=Object.assign({},BIL_STD,Lager.les('rr_bil')||{});
+/* Sanering ved innlesing. Sperren mot negative tall laa bare paa input-hendelsen,
+   saa et minustall lagret i en tidligere okt kom rett tilbake ved neste apning —
+   med lanebehov storre enn bilprisen og «−24 000 kr om 12 maneder». */
+['pris','aar','kontant','buffer','faste','sparing','fgRente','lonn','gjeldFoer',
+ 'nom','lopetid','bomDager','bomEgen','bomTakst','bomRush','bomRushPass',
+ 'bomAnnenPass','bomBrikke','bomEl','bomTak','vintertap','sommertap',
+ 'km','momsPris','forsikring'].forEach(k=>{
+  if(BIL[k]!=='' && BIL[k]!=null && parseFloat(BIL[k])<0) BIL[k]=0; });
 const bilLagre=()=>Lager.skriv('rr_bil',BIL);
 
-/* Verditap (OFV): punktene eksakte, rett strek mellom, samme takt etter siste punkt. */
+/* Verditap (OFV): punktene eksakte, rett strek mellom. INGEN ekstrapolasjon.
+   Ny bil har maalepunkter til 60 mnd, brukt bare til 36. Forlengelsen som laa her
+   for gjorde at kurvene KRYSSET ved mnd 73 — verktoyet pasto da at ny bil var
+   billigere enn brukt. Utenfor maalt omraade returneres null, og den som spor
+   maa vise «ingen data». Rettet 22.08.2026. */
 const BIL_TAP={ny:[[0,1],[12,.80],[36,.60],[60,.47]],brukt:[[0,1],[12,.83],[36,.66]]};
+const BIL_TAP_MAKS={ny:60,brukt:36};
 function bilVerdi(alder,mnd){
   const p=BIL_TAP[alder];
+  if(mnd>BIL_TAP_MAKS[alder]) return null;
   for(let i=1;i<p.length;i++) if(mnd<=p[i][0]){
     const [m0,v0]=p[i-1],[m1,v1]=p[i]; return v0+(v1-v0)*(mnd-m0)/(m1-m0); }
-  const [m0,v0]=p[p.length-2],[m1,v1]=p[p.length-1];
-  return Math.max(0,v1+(v1-v0)/(m1-m0)*(mnd-m1));
+  return p[p.length-1][1];
 }
 function bilAnnuitet(P,r,n){ return r===0?P/n:P*r/(1-Math.pow(1+r,-n)); }
 function bilRest(P,r,n,k){ if(k>=n) return 0; if(r===0) return P*(1-k/n);
   const t=bilAnnuitet(P,r,n); return P*Math.pow(1+r,k)-t*(Math.pow(1+r,k)-1)/r; }
 /* Effektiv av nominell + gebyr (etab 2500, termingebyr 85 som markedsramme). Ren matte. */
 function bilEffektiv(P,nomAar,n,etab,geb){
-  if(P<=0) return 0;
+  if(P<=0) return null;
   const term=bilAnnuitet(P,nomAar/12,n)+ (geb||0), ut=P-(etab||0);
+  /* Er laanet mindre enn etableringsgebyret, faar du utbetalt null eller mindre
+     og det finnes ingen effektiv rente. For denne sperren returnerte funksjonen
+     bisection-taket: 409 500 %, som gikk rett videre inn i undervannsgrafen. */
+  if(ut<=0) return null;
   let lo=0,hi=1;
   for(let i=0;i<70;i++){ const m=(lo+hi)/2; let pv=0;
     for(let k=1;k<=n;k++) pv+=term/Math.pow(1+m,k);
     if(pv>ut) lo=m; else hi=m; }
+  if(hi>=0.999) return null;               // bisection mettet — ikke et tall
   return (Math.pow(1+(lo+hi)/2,12)-1)*100;
 }
+const pstN=v=>v===null?'—':pst(v);
 
-function anslagToggle(b){ b.setAttribute('aria-expanded', b.getAttribute('aria-expanded')!=='true'); }
-function bilAnslag(tekst){
-  return '<button type="button" class="anslag" aria-expanded="false" '+
+function anslagToggle(b){
+  const ny = b.getAttribute('aria-expanded')!=='true';
+  b.setAttribute('aria-expanded', ny);
+  const k=b.getAttribute('data-anslag');
+  if(k){ BIL.anslagAapen=Object.assign({},BIL.anslagAapen||{},{[k]:ny}); bilLagre(); }
+}
+/* Noekkelen gjor at merket overlever at bilTegnAlt() skriver innerHTML paa nytt
+   ved hvert tastetrykk. For dette kollapset forklaringen mens du justerte tallet
+   den forklarte. Tilstanden ligger i rr_bil sammen med resten av bil-delen. */
+function bilAnslag(nokkel,tekst){
+  const aapen=!!((BIL.anslagAapen||{})[nokkel]);
+  return '<button type="button" class="anslag" data-anslag="'+nokkel+'" aria-expanded="'+aapen+'" '+
     'onclick="anslagToggle(this)">anslag</button><span class="anslagTekst"> — '+tekst+'</span>';
 }
 
-/* Bom: takstene etter rabattkuttet 30.06.2026 (fra 50 % ekstra rabatt/60 % total til
-   30 % ekstra/44 % total). 1 383 er UTLEDET fra det gamle profiltallet 988 kr/mnd med ny
-   rabattsats — det er IKKE lest ut av takstregulativet. Utledningen gjort 22.08.2026.
-   Profil: to rushpasseringer per dag, 21 dager i måneden. */
-const BIL_BOM={elbil:1383,bensin:1411,profilDager:21};
+/* Bom — nasjonal modell, rettet 22.08.2026.
+   Ingen nasjonal bomtakst finnes. Rabattene settes per bompengeprosjekt; det ENESTE
+   som gjelder hele landet er et tak: elbil skal betale maksimalt 70 % av vanlig
+   passeringstakst (NAF, lest 22.08.2026). De 20 % brikkerabatt er heller ikke en
+   nasjonal regel — NAF beskriver dem som Fjellinjens tilbud i Oslo.
+   Derfor tar verktoyet imot takst og rabatter som INNDATA, og regner resten.
+
+   TO FEIL RETTET HER, begge fordi et tall ble tolket uten aa slaa opp taksten:
+   1) Verktoyet hadde elbil 1383 / bensin 1411, differanse 28 kr, og konkluderte at
+      elbilfordelen var borte.
+   2) Min egen retting satte 1383/1976 fordi jeg leste 988 kr/mnd som FOR-kuttet.
+   Tromsos faktiske takst: 14 kr vanlig, 42 kr i rushtid (3x). Profilen med to
+   rushpasseringer i 21 dager gir 42 x 42 = 1764 kr/mnd brutto. Da blir
+   elbil 1764x0,56 = 988 og bensin 1764x0,80 = 1411 — altsa var de opprinnelige
+   tallene RIKTIGE, og differansen er 423 kr/mnd, ikke 28 og ikke 593.
+   Forholdet 0,56/0,80 = 70 % har stemt hele veien. */
+const BIL_BOM_TROMSO={bomTakst:14,bomRush:3,bomRushPass:2,bomAnnenPass:0,
+  bomDager:21,bomBrikke:20,bomEl:44,bomTak:80};
+
+/* Ett sted for bomtallene, slik at bom-tabellen, el-tabellen og setningen i
+   teksten ikke kan sprike. For dette sto «28 kr» hardkodet to steder. */
+function bilBomTall(){
+  const egen=String(BIL.bomEgen).trim()!==''&&num(BIL.bomEgen)>0;
+  const takst=num(BIL.bomTakst), rushF=Math.max(1,num(BIL.bomRush)||1);
+  const rp=num(BIL.bomRushPass), ap=num(BIL.bomAnnenPass);
+  const dagerRaa=num(BIL.bomDager), std=dagerRaa<=0, dager=std?21:dagerRaa;
+  const takRaa=num(BIL.bomTak), tak=takRaa>0?takRaa:Infinity;
+  let pr=rp*dager, pa=ap*dager;
+  const totalUten=pr+pa;
+  let takTraff=false;
+  /* Taket teller passeringer, ikke kroner. Blandingen skaleres proporsjonalt —
+     i virkeligheten avgjor rekkefolgen paa maaneden hvilke som faller utenfor. */
+  if(totalUten>tak && totalUten>0){ takTraff=true; const f=tak/totalUten; pr*=f; pa*=f; }
+  const brutto=pr*takst*rushF + pa*takst;
+  const rB=num(BIL.bomBrikke)/100, rE=num(BIL.bomEl)/100;
+  const el=egen?num(BIL.bomEgen):brutto*(1-rE);
+  const be=egen?num(BIL.bomEgen):brutto*(1-rB);
+  return {egen,std,dager,brutto,pr,pa,totalUten,tak,takTraff,rB,rE,
+          el,be,diff:be-el,andel:rB<1?(1-rE)/(1-rB):1};
+}
+function bilBomTromso(){ Object.assign(BIL,BIL_BOM_TROMSO); bilLagre();
+  Object.entries(BIL_BOM_TROMSO).forEach(([k,v])=>{ const e=$(k.replace(/^bom/,'bilBom')); if(e) e.value=v; });
+  bilTegnAlt(); }
 
 function bilTegnTap(){
   const pris=num(BIL.pris), N=Math.max(12,Math.round(num(BIL.aar)*12));
@@ -1121,22 +1258,29 @@ function bilTegnTap(){
   const W=svg.clientWidth||358,H=210,P={t:14,r:12,b:24,l:46};
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
   const x=i=>P.l+(W-P.l-P.r)*i/N, y=v=>P.t+(H-P.t-P.b)*(1-v/(pris*1.04));
-  const kurve=a=>Array.from({length:N+1},(_,k)=>(k?'L':'M')+x(k).toFixed(1)+' '+
-    y(pris*bilVerdi(a,k)).toFixed(1)).join(' ');
+  const kurve=a=>{ const M=Math.min(N,BIL_TAP_MAKS[a]);
+    return Array.from({length:M+1},(_,k)=>(k?'L':'M')+x(k).toFixed(1)+' '+
+      y(pris*bilVerdi(a,k)).toFixed(1)).join(' '); };
   let g='';
   for(let k=0;k<=N;k+=12) g+=`<text x="${x(k)}" y="${H-6}" fill="${css('--ink3')}" font-size="10" text-anchor="middle">år ${k/12}</text>`;
   [0,.25,.5,.75,1].forEach(f=>{ g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${y(pris*f)}" y2="${y(pris*f)}" stroke="${css('--flate3')}"/>
     <text x="${P.l-6}" y="${y(pris*f)+3}" fill="${css('--ink3')}" font-size="9.5" text-anchor="end">${tall(pris*f/1000)}k</text>`; });
   svg.innerHTML=g+`<path d="${kurve('ny')}" fill="none" stroke="${css('--kritisk')}" stroke-width="2"/>
     <path d="${kurve('brukt')}" fill="none" stroke="${css('--god')}" stroke-width="2"/>`;
-  const slNy=pris*bilVerdi('ny',N), slBr=pris*bilVerdi('brukt',N);
-  $('bilTapKort').innerHTML=`
-    <div class="res"><div class="l">Kjøpt ny</div><div class="v">−${tall(pris-slNy)}</div>
-      <div class="d">i verditap — verdt ${kr(slNy)} igjen</div></div>
-    <div class="res"><div class="l">Kjøpt 4 år gammel</div><div class="v">−${tall(pris-slBr)}</div>
-      <div class="d">i verditap — verdt ${kr(slBr)} igjen</div></div>
-    <div class="res"><div class="l">Forskjellen</div><div class="v">${tall(slBr-slNy)}</div>
-      <div class="d">spart ved brukt til samme pris</div></div>`;
+  const vNy=bilVerdi('ny',N), vBr=bilVerdi('brukt',N);
+  const slNy=vNy===null?null:pris*vNy, slBr=vBr===null?null:pris*vBr;
+  const rad=(l,sl,maks)=> sl===null
+    ? `<div class="res"><div class="l">${l}</div><div class="v">—</div>
+        <div class="d">OFV har ingen tall etter ${maks/12} år for denne bilalderen</div></div>`
+    : `<div class="res"><div class="l">${l}</div><div class="v">−${tall(pris-sl)}</div>
+        <div class="d">i verditap — verdt ${kr(sl)} igjen</div></div>`;
+  const diff = (slNy!==null&&slBr!==null)
+    ? `<div class="res"><div class="l">Forskjellen</div><div class="v">${tall(slBr-slNy)}</div>
+        <div class="d">spart ved brukt til samme pris</div></div>`
+    : `<div class="res"><div class="l">Forskjellen</div><div class="v">—</div>
+        <div class="d">kan bare regnes så langt begge kurvene har måledata — til og med 3 år</div></div>`;
+  $('bilTapKort').innerHTML=rad('Kjøpt ny',slNy,BIL_TAP_MAKS.ny)
+    +rad('Kjøpt 4 år gammel',slBr,BIL_TAP_MAKS.brukt)+diff;
 }
 
 function bilTegnValg(){
@@ -1145,22 +1289,40 @@ function bilTegnValg(){
   const n=Math.max(1,Math.round(num(BIL.lopetid)))*12;
   const behov=Math.max(0,pris-kontant);
   const eff=bilEffektiv(behov>0?behov:pris,num(BIL.nom)/100,n,2500,85);
-  const skatt=r=>BIL.fradrag? r*0.78 : r;
+  const skatt=r=>r===null?null:(BIL.fradrag? r*0.78 : r);
   const fgStd=Math.abs(fg-BIL_STD.fgRente)<0.001;
   $('bilFgMerke').innerHTML= fgStd
-    ? bilAnslag('5,5 % er et rent anslag — og det er både hele renterisikoen og '+
+    ? bilAnslag('fg','5,5 % er et rent anslag — og det er både hele renterisikoen og '+
         'referansepunktet i tabellen under. Overstyr med din egen sats over, så forsvinner merket.')
     : 'Egen sats lagt inn — anslagsmerket er fjernet.';
-  const arv=fgStd? ' '+bilAnslag('bygger på anslått fellesgjeldsrente 5,5 %.') : '';
+  const arv=fgStd? ' '+bilAnslag('fgarv','bygger på anslått fellesgjeldsrente 5,5 %.') : '';
+  const geb=bilAnslag('gebyr','etableringsgebyr 2 500 kr og termingebyr 85 kr er en '+
+    'markedsramme fra undersøkelsen 18.08.2026, ikke ditt tilbud. De to tallene driver '+
+    'effektiv rente, månedsterminen, hele rentestigen og undervannsgrafen — be banken '+
+    'om de faktiske gebyrene og regn på nytt.');
+  const bank=bilAnslag('bank','3–4 % er en markedsramme uten navngitt kilde.');
   $('bilAltTabell').innerHTML=`
     <tr><th>Én krone brukt på</th><th>Nominelt</th><th>${BIL.fradrag?'Etter skatt (22 %)':'Etter skatt (fradrag: 0)'}</th></tr>
     <tr><td>Nedbetale rentefritt lån — <b>aldri først</b></td><td>${pst(0)}</td><td>${pst(0)}</td></tr>
     <tr class="best"><td>Nedbetale fellesgjeld${arv}</td><td>${pst(fg)}</td><td>${pst(skatt(fg))}</td></tr>
-    <tr><td>Slippe billånet (effektiv)</td><td>${pst(eff)}</td><td>${pst(skatt(eff))}</td></tr>
-    <tr><td>Bankinnskudd</td><td>3,00–4,00 %</td><td>${BIL.fradrag?'2,34–3,12 %':'3,00–4,00 %'}</td></tr>`;
+    <tr><td>Slippe billånet (effektiv)${geb}${eff!==null&&eff>100?bilAnslag('minilaan','så høy fordi etableringsgebyret dominerer et lite lån. Tallet er matematisk riktig, men ubrukelig som sammenligning mot radene over — de gjelder lån i en helt annen størrelsesorden.'):''}</td>
+      <td>${pstN(eff)}</td><td>${pstN(skatt(eff))}</td></tr>
+    <tr><td>Bankinnskudd${bank}</td><td>3,00–4,00 %</td><td>${BIL.fradrag?'2,34–3,12 %':'3,00–4,00 %'}</td></tr>`;
   const krav=2*faste, anbefalt=3*faste;
+  const horisont=Math.round(num(BIL.aar)*12), laanMnd=n;
+  const varselHorisont = laanMnd>horisont && horisont>0
+    ? `<div class="sperre"><b>Lånet varer lenger enn du planlegger å eie bilen.</b>
+       Løpetid ${BIL.lopetid} år mot eiertid ${BIL.aar} år — du skylder fortsatt penger
+       på en bil du har solgt. Det er nøyaktig situasjonen undervannskurven nedenfor
+       viser.</div>` : '';
   let dom;
   if(pris<=0) dom='<p class="status">Legg inn bilens pris øverst i bil-delen.</p>';
+  /* Uten denne grenen slo sperren seg selv av: tomt faste-felt ga krav=0, og
+     buffer 0 >= 0. Teksten ville lydt «Minst to måneders faste utgifter — 0 kr». */
+  else if(faste<=0)
+    dom=`<div class="sperre"><b>Legg inn faste utgifter først.</b>
+      Bufferkravet regnes som to–tre måneders faste utgifter, og uten det tallet
+      finnes det ingen buffer å måle mot. Ingen anbefaling før feltet er fylt.</div>`;
   else if(buffer<krav)
     dom=`<div class="sperre"><b>Ingen anbefaling før bufferen er på plass.</b>
       Minst to måneders faste utgifter — ${kr(krav)} — skal stå urørt før en krone går til
@@ -1170,72 +1332,155 @@ function bilTegnValg(){
     const vent=12, spart=kontant+sparing*vent;
     dom='<div class="notis"><b>Tre veier, samme lommebok:</b><br>'+
       (kontant>=pris
-        ?`<b>Kontant:</b> ${kr(pris)} nå, ${kr(kontant-pris)} igjen — alternativkostnad ${pst(skatt(fg))}${fgStd?' (anslått sats)':''} mot ${pst(skatt(eff))} for lånet.<br>`
+        ?`<b>Kontant:</b> ${kr(pris)} nå, ${kr(kontant-pris)} igjen — alternativkostnad ${pst(skatt(fg))}${fgStd?' (anslått sats)':''}${eff===null?'':' mot '+pstN(skatt(eff))+' for lånet'}.<br>`
         :`<b>Kontant:</b> rekker ikke — du har ${kr(kontant)} av ${kr(pris)}.<br>`)+
-      (behov>0?`<b>Lån ${kr(behov)}:</b> ${kr(bilAnnuitet(behov,num(BIL.nom)/100/12,n)+85)}/mnd i ${BIL.lopetid} år, effektiv rente ${pst(eff)}.<br>`:'')+
+      (behov>0?`<b>Lån ${kr(behov)}:</b> ${kr(bilAnnuitet(behov,num(BIL.nom)/100/12,n)+85)}/mnd i ${BIL.lopetid} år, `+
+        (eff===null
+          ? 'og lånet er så lite at etableringsgebyret er større enn det du får utbetalt — da finnes det ingen effektiv rente å oppgi.'
+          : (eff>100
+             ? `effektiv rente ${pst(eff)} — så høy fordi etableringsgebyret dominerer et lite lån. Tallet er riktig, men ubrukelig som sammenligning.`
+             : `effektiv rente ${pst(eff)}.`))+'<br>':'')+
       `<b>Ikke ennå:</b> med ${kr(sparing)}/mnd har du ${kr(spart)} om ${vent} måneder`+
       `${spart>=pris?' — nok til å betale kontant':''}, lånebehovet er ${kr(Math.max(0,pris-spart))},`+
       ` og verditapet i ventetiden er det noen andre som tar. Et likeverdig svar, ikke et nederlag.</div>`;
   }
-  $('bilDom').innerHTML=dom;
+  $('bilDom').innerHTML=varselHorisont+dom;
 }
 
+/* Sortert stigende. For dette sto 13,1 % over 10,7–12,7 % i en liste som ellers
+   leses stigende — og 10,7–12,7 ble brukt som skrekkeksempel i buffersperren mens
+   raden over var dyrere. Alle radene er EFFEKTIVE renter fra undersokelsen
+   18.08.2026; det er ikke bekreftet mot bankenes prislister i dag. */
 function bilTegnStige(){
+  const kilde=bilAnslag('stige','alle radene er effektive renter fra markedsundersøkelsen '+
+    '18.08.2026. De er ikke etterprøvd mot bankenes prislister senere, og de er beste '+
+    'tilbud — ikke det du nødvendigvis får.');
   $('bilStige').innerHTML=`
-    <tr><th>Lånetype</th><th>Effektiv rente</th></tr>
+    <tr><th>Lånetype</th><th>Effektiv rente${kilde}</th></tr>
     <tr><td>Boliglån, 60 % belåning</td><td>5,07–5,15 %</td></tr>
     <tr><td>Billån m/salgspant, 35 % egenkapital</td><td>7,02 %</td></tr>
-    <tr><td>Billån ung, 100 % finansiering, 150k/5 år</td><td>8,40 %</td></tr>
-    <tr><td>Kaskofritt småbillån, 100k/5 år</td><td>13,1 %</td></tr>
-    <tr><td>Forbrukslån</td><td>10,7–12,7 %</td></tr>`;
+    <tr class="best"><td>Billån ung, 100 % finansiering, 150k/5 år</td><td>8,40 %</td></tr>
+    <tr><td>Forbrukslån</td><td>10,7–12,7 %</td></tr>
+    <tr><td>Kaskofritt småbillån, 100k/5 år</td><td>13,1 %</td></tr>`;
 }
 
 function bilTegnForskrift(){
-  const lonn=num(BIL.lonn), foer=num(BIL.gjeldFoer);
+  const lonn=num(BIL.lonn), foer=num(BIL.gjeldFoer), faste=num(BIL.faste);
   const behov=Math.max(0,num(BIL.pris)-num(BIL.kontant));
-  const gjeld=foer+behov, tak=lonn*5, grad=lonn>0?gjeld/lonn:0;
+  const gjeld=foer+behov, tak=lonn*5, harLonn=lonn>0;
+  const grad=harLonn?gjeld/lonn:null;
   const stress=Math.max(7, num(BIL.nom)+3);
   const n=Math.max(1,Math.round(num(BIL.lopetid)))*12;
   const stressTerm=bilAnnuitet(behov,stress/100/12,n);
+  /* Uten inntekt ga de to forste radene rodt («over taket») og gronn («0,00x ok»)
+     samtidig, fordi grad falt tilbake paa 0. Na viser begge «—». */
+  const radGjeld = harLonn
+    ? `<td>${kr(tak)}</td><td><span class="merkelapp ${gjeld>tak?'kritisk':'god'}">${gjeld>tak?'over taket':'innenfor'}</span></td>`
+    : `<td>—</td><td><span class="merkelapp">inntekt mangler</span></td>`;
+  const radGrad = harLonn
+    ? `<td>${grad.toLocaleString('no-NO',{maximumFractionDigits:2})}×</td><td>5×</td>
+       <td><span class="merkelapp ${grad>5?'kritisk':'god'}">${grad>5?'krever mer sikkerhet':'ok'}</span></td>`
+    : `<td>—</td><td>5×</td><td><span class="merkelapp">inntekt mangler</span></td>`;
+  /* Stressterminen gjelder BARE billaanet. Gjeld fra for har hverken rente eller
+     lopetid i verktoyet, saa den kan ikke stresstestes — og en test som later som
+     den dekker samlet gjeld er verre enn en som sier hva den ikke dekker. */
+  const bareBil = foer>0
+    ? bilAnslag('stress','gjelder bare billånet. Gjeld fra før er med i gjeldsgraden over, '+
+        'men kan ikke stresstestes her — verktøyet vet hverken rente eller gjenværende '+
+        'løpetid på den. Forskriften krever betjeningsevne på SAMLET gjeld, så den ekte '+
+        'terminen er høyere enn dette.')
+    : '';
+  const rom = harLonn ? lonn/12-faste : null;
+  const dom = rom===null
+    ? `<span class="merkelapp">inntekt mangler</span>`
+    : (stressTerm>rom
+        ? `<span class="merkelapp kritisk">over det som er igjen (${kr(rom)})</span>`
+        : `<span class="merkelapp">${Math.round(stressTerm/Math.max(rom,1)*100)} % av ${kr(rom)} brutto igjen</span>`);
   $('bilForskrift').innerHTML=`
     <tr><th>Hva</th><th>Verdi</th><th>Grense</th><th>Status</th></tr>
-    <tr><td>Samlet gjeld med billånet</td><td>${kr(gjeld)}</td><td>${kr(tak)}</td>
-      <td><span class="merkelapp ${gjeld>tak?'kritisk':'god'}">${gjeld>tak?'over taket':'innenfor'}</span></td></tr>
-    <tr><td>Gjeldsgrad</td><td>${grad.toLocaleString('no-NO',{maximumFractionDigits:2})}×</td><td>5×</td>
-      <td><span class="merkelapp ${grad>5?'kritisk':'god'}">${grad>5?'krever mer sikkerhet':'ok'}</span></td></tr>
-    <tr><td>Terminen ved stressrente ${pst(stress)}</td><td>${kr(stressTerm)}/mnd</td>
-      <td>betjeningsevne</td><td><span class="merkelapp god">max(7 %, rente + 3 pp)</span></td></tr>`;
+    <tr><td>Samlet gjeld med billånet</td><td>${kr(gjeld)}</td>${radGjeld}</tr>
+    <tr><td>Gjeldsgrad</td>${radGrad}</tr>
+    <tr><td>Terminen ved stressrente ${pst(stress)}${bareBil}</td><td>${kr(stressTerm)}/mnd</td>
+      <td>betjeningsevne</td><td>${dom}</td></tr>`;
 }
 
 function bilTegnBom(){
-  const egen=String(BIL.bomEgen).trim()!==''&&num(BIL.bomEgen)>0;
-  const dager=num(BIL.bomDager)||BIL_BOM.profilDager;
-  const skala=v=>v/BIL_BOM.profilDager*dager;
-  const el=egen?num(BIL.bomEgen):skala(BIL_BOM.elbil), be=egen?num(BIL.bomEgen):skala(BIL_BOM.bensin);
-  const merke=egen?'Egne tall lagt inn — anslagsmerket er fjernet.'
-    :bilAnslag('utledet 22.08.2026 fra det gamle profiltallet 988 kr/mnd med ny rabattsats '+
-      '(elbilrabatten kuttet 30.06.2026 fra 50 % ekstra til 30 % ekstra, 60 % → 44 % total) '+
-      '— ikke lest ut av takstregulativet. Konklusjonstallene i tabellen arver merket.');
+  const b=bilBomTall();
+  const merke=b.egen?'Egne tall lagt inn — verktøyet regner ikke lenger på takst og rabatt.'
+    :bilAnslag('bom','tallene er regnet av taksten og rabattene DU har lagt inn — det finnes '+
+      'ingen nasjonal bomtakst å hente. Det eneste som gjelder hele landet er at elbil skal '+
+      'betale maksimalt 70 % av vanlig passeringstakst (NAF, lest 22.08.2026); alt annet '+
+      'settes per bompengeprosjekt. Timesregelen er ikke modellert — kjører du gjennom flere '+
+      'bommer innen samme time, betaler du mindre enn dette. Månedstaket ER kodet, og fordeles '+
+      'proporsjonalt mellom rush og ikke-rush.');
+  const advarsel = (!b.egen && b.rE<0.30 && num(BIL.bomEl)>=0)
+    ? `<tr><td colspan="3" class="status"><b>Merk:</b> elbilrabatten du har lagt inn
+        (${Math.round(b.rE*100)} %) er lavere enn den nasjonale regelen om at elbil skal
+        betale maksimalt 70 % av vanlig takst — altså minst 30 % rabatt.</td></tr>` : '';
+  const takNote=b.takTraff
+    ? `<tr><td colspan="3" class="status">Månedstaket på ${b.tak} passeringer slår inn:
+        ${Math.round(b.totalUten)} passeringer blir belastet som ${b.tak}.</td></tr>` : '';
+  const stdNote=b.std
+    ? `<tr><td colspan="3" class="status">Pendlerdager er tomt — regner med 21 dager.</td></tr>` : '';
+  const grunnlag = b.egen ? '' :
+    `<tr><td colspan="3" class="status">Grunnlag: ${Math.round(b.totalUten)} passeringer/mnd
+      à ${kr(num(BIL.bomTakst))}${num(BIL.bomRush)>1?` (rush ${num(BIL.bomRush)}× = ${kr(num(BIL.bomTakst)*num(BIL.bomRush))})`:''}
+      = ${kr(b.brutto)}/mnd før rabatt.</td></tr>`;
   $('bilBomTabell').innerHTML=`
     <tr><th>Med brikke</th><th>Per måned</th><th>Per år</th></tr>
-    <tr><td>Elbil</td><td>${kr(el)}</td><td>${kr(el*12)}</td></tr>
-    <tr><td>Bensin</td><td>${kr(be)}</td><td>${kr(be*12)}</td></tr>
-    <tr class="sum"><td>Differansen</td><td colspan="2">${kr(be-el)}/mnd ${merke}</td></tr>`;
+    <tr><td>Elbil (${Math.round(b.rE*100)} % rabatt)</td><td>${kr(b.el)}</td><td>${kr(b.el*12)}</td></tr>
+    <tr><td>Bensin/diesel (${Math.round(b.rB*100)} % rabatt)</td><td>${kr(b.be)}</td><td>${kr(b.be*12)}</td></tr>
+    <tr class="sum"><td>Differansen</td><td colspan="2">${kr(b.diff)}/mnd ${merke}</td></tr>
+    ${grunnlag}${takNote}${stdNote}${advarsel}`;
+  const el=$('bilBomSetning'); if(el) el.innerHTML= b.egen
+    ? `Med dine egne tall er elbil og bensin like — overstyringen setter begge til samme beløp.`
+    : (b.brutto<=0
+       ? `Legg inn passeringstaksten der du bor, eller trykk «Tromsø» for et ferdig eksempel.`
+       : `<b>Elbil betaler ${kr(b.el)}/mnd mot bensinbilens ${kr(b.be)} — ${kr(b.diff)} mindre i måneden.</b>
+          Elbilen betaler ${Math.round(b.andel*100)} % av det bensinbilen betaler med disse rabattene.`);
 }
 
 function bilTegnEl(){
-  const km=num(BIL.km)||15000, pris=num(BIL.momsPris);
+  const kmRaa=num(BIL.km), stdKm=kmRaa<=0, km=stdKm?15000:kmRaa, pris=num(BIL.momsPris);
   const driv=v=>v/15000*km;
+  /* Rekkeviddetap er okt forbruk: faktor 1/(1-tap).
+     Vinter 38 % (NAF febr. 2026) -> 1,613. Sommer 17,5 % (midt i tekstens 15-20 %)
+     -> 1,212. Halve aaret hver: 0,5*1,212 + 0,5*1,613 = 1,4125, altsa 41 % paaslag.
+     Forste retting kodet bare vinteren, mens teksten lovet begge — 358 kr for lite. */
+  const tapV=Math.min(0.8,Math.max(0,num(BIL.vintertap)/100||0.38));
+  const tapS=Math.min(0.8,Math.max(0,num(BIL.sommertap)/100||0.175));
+  const vinterFaktor=0.5/(1-tapS)+0.5/(1-tapV);
+  const elBase=driv(3378), elVinter=elBase*(vinterFaktor-1), beDriv=driv(15362);
+  const tfaEl=9.16*365, tfaBe=6.52*365;
+  const b=bilBomTall();
+  const elSum=elBase+elVinter+tfaEl+b.el*12, beSum=beDriv+tfaBe+b.be*12;
   const grunnlag=Math.max(0,pris-300000), moms=grunnlag*0.25;
+  const aarligSpart=beSum-elSum;
+  const tilbake=aarligSpart>0? moms/aarligSpart : null;
+  const kmNote=stdKm?` <span class="status">(tomt felt — standard 15 000 km)</span>`:'';
   $('bilElTabell').innerHTML=`
     <tr><th>Post per år</th><th>Elbil</th><th>Bensin/diesel</th></tr>
-    <tr><td>Drivstoff (${tall(km)} km, OFV)</td><td>${kr(driv(3378))}</td><td>${kr(driv(15362))} <span class="status">(diesel)</span></td></tr>
-    <tr><td>Trafikkforsikringsavgift — <b>elbilen betaler mer</b></td><td>${kr(9.16*365)}</td><td>${kr(6.52*365)}</td></tr>
-    <tr><td>Bomringen (profilen over)</td><td colspan="2">28 kr/mnd i forskjell — fordelen er borte</td></tr>
-    <tr class="sum"><td>Moms på elbil til ${kr(pris)}</td><td colspan="2">moms av ${kr(grunnlag)} = ${kr(moms)}
-      ${bilAnslag('grensa falt fra 500 000 til 300 000 kr 1.1.2026, varslet videre til 150 000 i 2027 '+
-      'og 0 i 2028 — beskrevet som avtale mellom Ap og støttepartiene, IKKE endelig bekreftet mot '+
-      'Skatteetaten. Momstallet arver merket.')}</td></tr>`;
+    <tr><td>Drivstoff (${tall(km)} km)${kmNote}${bilAnslag('driv','3 378 kr strøm mot 15 362 kr diesel på 15 000 km, OFV. Skaleres rett med kjørelengde. Ikke etterprøvd mot dagens strøm- og dieselpris.')}</td>
+      <td>${kr(elBase)}</td><td>${kr(beDriv)}</td></tr>
+    <tr><td>Vinterpåslag elbil (kaldt klima)${bilAnslag('vinter','tapt rekkevidde er økt forbruk: faktor 1/(1−tap), halve året med hver sats. Standardverdiene 38 % vinter og 17,5 % sommer er NAFs vintertest februar 2026, målt mellom −7 og −32 °C — altså nordnorske forhold. Bor du lenger sør, er tapet mindre; sett dine egne tall i feltene over. Bensinbil bruker også mer om vinteren; det er ikke tallfestet her, så elbilens ulempe er om noe overdrevet.')}</td>
+      <td>${kr(elVinter)}</td><td>—</td></tr>
+    <tr><td>Trafikkforsikringsavgift — <b>elbilen betaler mer</b><br>
+      <span class="status">9,16 mot 6,52 kr/døgn, satser fra 1.3.2026 (SmartePenger, lest 22.08.2026)</span></td>
+      <td>${kr(tfaEl)}</td><td>${kr(tfaBe)}</td></tr>
+    <tr><td>Bomringen (profilen over)${b.egen?'':bilAnslag('bomarv','bygger på den utledede bruttotaksten 2 470 kr/mnd — se bom-tabellen over. Denne raden alene er '+Math.round((b.be-b.el)*12/Math.max(beSum-elSum,1)*100)+' % av elbilens årlige fordel.')}</td>
+      <td>${kr(b.el*12)}</td><td>${kr(b.be*12)}</td></tr>
+    <tr class="sum"><td>Sum per år${b.egen?'':bilAnslag('sumarv','summen arver usikkerheten i radene over: bruttotaksten er utledet, drivstofftallene er OFVs på 15 000 km, og vinterpåslaget er regnet av NAFs rekkeviddetap.')}</td>
+      <td>${kr(elSum)}</td><td>${kr(beSum)}</td></tr>
+    <tr class="${aarligSpart>0?'best':''}"><td>Elbilens fordel per år${b.egen?'':bilAnslag('fordelarv','arver alle anslagene over. Endres bruttotaksten for bommen, flytter dette tallet seg mest.')}</td>
+      <td colspan="2">${aarligSpart>0?kr(aarligSpart):kr(-aarligSpart)+' i bensinbilens favør'}</td></tr>
+    <tr><td>Engangs: moms på elbil til ${kr(pris)}
+      ${bilAnslag('moms','grensa falt fra 500 000 til 300 000 kr 1.1.2026, videre til 150 000 fra '+
+      '1.1.2027 og 0 fra 1.1.2028. Nedtrappingen kom av budsjettenigheten og erstattet et '+
+      'tidligere forslag om FULL moms allerede fra 2027 — flere kilder beskriver fortsatt det '+
+      'forslaget, så sjekk datoen på det du leser. Kilde: Sticos 07.12.2025, samstemt med '+
+      'Tek.no og Bilnytt. IKKE bekreftet mot Skatteetatens egen satsliste.')}</td>
+      <td colspan="2">moms av ${kr(grunnlag)} = <b>${kr(moms)}</b>${
+        tilbake!==null?` — tjent inn på ${tilbake.toLocaleString('no-NO',{maximumFractionDigits:1})} år`:''}</td></tr>`;
 }
 
 function bilSettAlder(a){ BIL.alder=a; bilLagre();
@@ -1248,31 +1493,41 @@ function bilTegnUv(){
   const svg=$('bilUvGraf'); if(!svg) return;
   if(pris<=0||behov<=0){ svg.innerHTML='';
     $('bilUvSvar').textContent=pris>0?'Uten lån finnes det ikke noe undervann — kurven gjelder lånt del.':''; return; }
-  const eff=bilEffektiv(behov,num(BIL.nom)/100,n,2500,85)/100, r=Math.pow(1+eff,1/12)-1;
-  const gj=[],vd=[]; for(let k=0;k<=n;k++){ gj.push(bilRest(behov,r,n,k)); vd.push(pris*bilVerdi(BIL.alder,k)); }
+  /* Banken nedbetaler med NOMINELL rente. For dette ble den effektive brukt — som
+     inneholder etableringsgebyret — saa restgjelden ble systematisk for hoy, og
+     samme kort viste terminen regnet med nominell over en graf regnet med effektiv. */
+  const r=num(BIL.nom)/100/12;
+  const maks=BIL_TAP_MAKS[BIL.alder], N=Math.min(n,maks);
+  const gj=[],vd=[]; for(let k=0;k<=N;k++){ gj.push(bilRest(behov,r,n,k)); vd.push(pris*bilVerdi(BIL.alder,k)); }
   const W=svg.clientWidth||358,H=210,P={t:14,r:12,b:24,l:46};
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
   const hi=Math.max(...gj,...vd)*1.05;
-  const x=i=>P.l+(W-P.l-P.r)*i/n, y=v=>P.t+(H-P.t-P.b)*(1-v/hi);
+  const x=i=>P.l+(W-P.l-P.r)*i/N, y=v=>P.t+(H-P.t-P.b)*(1-v/hi);
   const sti=a=>a.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
-  let skygge='',start=null,maks=0,mnd=0,under=0;
+  let skygge='',start=null,maksGap=0,mnd=0,under=0;
   const omr=(a,b)=>{ let d='M'+x(a)+' '+y(gj[a]);
     for(let k=a;k<=b;k++) d+='L'+x(k)+' '+y(gj[k]);
     for(let k=b;k>=a;k--) d+='L'+x(k)+' '+y(vd[k]);
     return `<path d="${d}Z" fill="${css('--kritisk')}" fill-opacity=".14"/>`; };
-  for(let k=0;k<=n;k++){ const gap=gj[k]-vd[k];
-    if(gap>0){ if(start===null) start=k; if(gap>maks){maks=gap;mnd=k;} under++; }
+  for(let k=0;k<=N;k++){ const gap=gj[k]-vd[k];
+    if(gap>0){ if(start===null) start=k; if(gap>maksGap){maksGap=gap;mnd=k;} under++; }
     else if(start!==null){ skygge+=omr(start,k); start=null; } }
-  if(start!==null) skygge+=omr(start,n);
+  if(start!==null) skygge+=omr(start,N);
   let g=skygge;
-  for(let k=0;k<=n;k+=12) g+=`<text x="${x(k)}" y="${H-6}" fill="${css('--ink3')}" font-size="10" text-anchor="middle">år ${k/12}</text>`;
+  for(let k=0;k<=N;k+=12) g+=`<text x="${x(k)}" y="${H-6}" fill="${css('--ink3')}" font-size="10" text-anchor="middle">år ${k/12}</text>`;
   svg.innerHTML=g+`<path d="${sti(vd)}" fill="none" stroke="${css('--god')}" stroke-width="2"/>
     <path d="${sti(gj)}" fill="none" stroke="${css('--kritisk')}" stroke-width="2"/>
-    <text x="${W-P.r}" y="${y(vd[n])-5}" fill="${css('--god')}" font-size="10.5" text-anchor="end">bilens verdi</text>
-    <text x="${W-P.r}" y="${y(gj[n])+12}" fill="${css('--kritisk')}" font-size="10.5" text-anchor="end">restgjeld</text>`;
-  $('bilUvSvar').textContent= maks>0
-    ? `Under vann i ${under} måneder; som mest er lånet ${kr(maks)} større enn bilen (måned ${mnd}). Det gapet — ikke hele lånet — er det en kausjonist reelt dekker.`
-    : 'Lånet er aldri større enn bilens verdi med disse tallene.';
+    <text x="${W-P.r}" y="${y(vd[N])-5}" fill="${css('--god')}" font-size="10.5" text-anchor="end">bilens verdi</text>
+    <text x="${W-P.r}" y="${y(gj[N])+12}" fill="${css('--kritisk')}" font-size="10.5" text-anchor="end">restgjeld</text>`;
+  const kuttet = N<n
+    ? ` Kurven stopper ved måned ${N} — så langt rekker OFVs måletall for denne bilalderen.
+        Lånet løper i ${n} måneder, så de siste ${n-N} er ikke dekket her.` : '';
+  $('bilUvSvar').innerHTML= maksGap>0
+    ? `Under vann i ${under} måneder; som mest er lånet ${kr(maksGap)} større enn bilen (måned ${mnd}).
+       Det er hva banken taper <i>hvis</i> bilen selges til denne verdien — ikke hele lånet, og ikke
+       nødvendigvis det en kausjonist hefter for. Hva kausjonisten hefter for står i
+       kausjonserklæringen.${kuttet}`
+    : 'Lånet er aldri større enn bilens verdi med disse tallene.'+kuttet;
 }
 
 function bilTegnForsikring(){
@@ -1285,14 +1540,34 @@ function bilTegnForsikring(){
 function bilTegnAlt(){ bilTegnTap(); bilTegnValg(); bilTegnStige(); bilTegnForskrift();
   bilTegnBom(); bilTegnEl(); bilTegnUv(); bilTegnForsikring(); }
 
+/* Utskrift: @media print{details{display:block}} apner IKKE et lukket <details> i
+   Chrome — innholdet skjules i UA-shadow-treet, ikke med display. Uten dette ble alt
+   som lå i en lukket seksjon borte i PDF-en, og PDF er nettopp der tallene siteres. */
+addEventListener('beforeprint',()=>{
+  document.querySelectorAll('details').forEach(d=>{ d.dataset.varAapen=d.open?'1':'0'; d.open=true; });
+  document.querySelectorAll('.anslag').forEach(b=>{ b.dataset.varAapen=b.getAttribute('aria-expanded'); b.setAttribute('aria-expanded','true'); });
+});
+addEventListener('afterprint',()=>{
+  document.querySelectorAll('details').forEach(d=>{ d.open=d.dataset.varAapen==='1'; });
+  document.querySelectorAll('.anslag').forEach(b=>{ b.setAttribute('aria-expanded', b.dataset.varAapen||'false'); });
+});
+
 (function bilInit(){
   const felter=[['bilPris','pris'],['bilAar','aar'],['bilKontant','kontant'],['bilBuffer','buffer'],
     ['bilFaste','faste'],['bilSparing','sparing'],['bilFgRente','fgRente'],['bilLonn','lonn'],
     ['bilGjeldFoer','gjeldFoer'],['bilNom','nom'],['bilLopetid','lopetid'],['bilBomDager','bomDager'],
-    ['bilBomEgen','bomEgen'],['bilKm','km'],['bilMomsPris','momsPris'],['bilForsikring','forsikring']];
+    ['bilBomEgen','bomEgen'],['bilBomTakst','bomTakst'],['bilBomRush','bomRush'],
+    ['bilBomRushPass','bomRushPass'],['bilBomAnnenPass','bomAnnenPass'],
+    ['bilBomBrikke','bomBrikke'],['bilBomEl','bomEl'],['bilBomTak','bomTak'],
+    ['bilVintertap','vintertap'],['bilSommertap','sommertap'],
+    ['bilKm','km'],['bilMomsPris','momsPris'],['bilForsikring','forsikring']];
   felter.forEach(([id,k])=>{ const el=$(id); if(!el) return;
     el.value=BIL[k];
-    el.addEventListener('input',()=>{ BIL[k]=el.value; bilLagre(); bilTegnAlt(); }); });
+    el.addEventListener('input',()=>{
+      /* Negative tall gikk rett gjennom: kontant −50 000 ga lånebehov 300 000 på en
+         bil til 250 000, og sparing −2 000 ga «du har −24 000 kr om 12 måneder». */
+      if(parseFloat(el.value)<0){ el.value='0'; }
+      BIL[k]=el.value; bilLagre(); bilTegnAlt(); }); });
   const frad=$('bilFradrag'); if(frad){ frad.checked=!!BIL.fradrag;
     frad.addEventListener('change',()=>{ BIL.fradrag=frad.checked; bilLagre(); bilTegnAlt(); }); }
   bilSettAlder(BIL.alder==='ny'?'ny':'brukt');
