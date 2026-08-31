@@ -105,6 +105,11 @@ th:first-child,td:first-child{text-align:left}
 td{padding:7px 6px;text-align:right;border-bottom:1px solid var(--flate3);white-space:nowrap}
 tr.sum td{background:var(--flate3);font-weight:800}
 tr.best td{color:var(--god);font-weight:700}
+/* Referanse, ikkje vinnar. Sjaa bilTegnStige: i rentestigen er HOEG rente daarleg,
+   saa den groene «best»-fargen ville tydd det motsette av det ho tyder i tabellen
+   over. Same farge for to motsette ting laerer lesaren at fargen ikkje betyr noko. */
+tr.ref td{font-weight:700}
+.ref-merke{color:var(--ink3);font-weight:400;font-size:11.5px}
 tr.klikk{cursor:pointer}
 tr.klikk:hover td{background:var(--flate3)}
 .felt{display:grid;grid-template-columns:1fr minmax(104px,150px);gap:10px;align-items:center;
@@ -339,7 +344,7 @@ Så lån mot kontant, forskriften, Tromsø-bommen og resten. Alt regnes lokalt.<
   <div class="felt"><label>Buffer på egen konto (kr)</label><input id="bilBuffer" inputmode="numeric"></div>
   <div class="felt"><label>Faste utgifter (kr/mnd)</label><input id="bilFaste" inputmode="numeric"></div>
   <div class="felt"><label>Sparing (kr/mnd)</label><input id="bilSparing" inputmode="numeric"></div>
-  <div class="felt"><label>Fellesgjeldsrente, nominell (%)</label><input id="bilFgRente" inputmode="decimal"></div>
+  <div class="felt"><label>Renten på gjelden du har fra før (%)</label><input id="bilFgRente" inputmode="decimal"></div>
   <p class="status" style="margin:4px 0 0" id="bilFgMerke"></p>
   <div style="margin:10px 0 4px">
     <label style="font-size:13px;color:var(--ink2)">
@@ -378,7 +383,10 @@ Så lån mot kontant, forskriften, Tromsø-bommen og resten. Alt regnes lokalt.<
   <div class="felt"><label>Billånets rente, nominell (%)</label><input id="bilNom" inputmode="decimal"></div>
   <div class="felt"><label>Løpetid (år)</label><input id="bilLopetid" inputmode="numeric"></div>
   <div class="rull"><table id="bilForskrift"></table></div>
-  <p class="status">Rentefrie lån teller <b>like mye</b> i 5×-taket som dyre lån — de koster
+  <p class="status">Dette er det eneste kortet som spør om gjeld du har fra før, og grunnen
+  er <b>forskriften</b>, ikke verktøyet: den ser på <b>samlet</b> gjeld, ikke på billånet
+  alene. Et verktøy som bare telte bilen ville svart ja der banken svarer nei.
+  Rentefrie lån teller <b>like mye</b> i 5×-taket som dyre lån — de koster
   ingenting i kroner og alt i handlingsrom. Stresstesten er den høyeste av 7&nbsp;% og dagens
   rente + 3 prosentpoeng.</p>
 </div>
@@ -1283,6 +1291,117 @@ function bilTegnTap(){
     +rad('Kjøpt 4 år gammel',slBr,BIL_TAP_MAKS.brukt)+diff;
 }
 
+/* ═════ vakt-anker: bilAlt start ════════════════════════════════════════════
+   Blokka mellom dette ankeret og «bilAlt slutt» blir henta ut og koeyrd av
+   tester/bilAltMarkering.test.js. Flyttar du henne, flytt ankera med. */
+
+/**
+ * «ÉN KRONE BRUKT PÅ» — KVA RAD SKAL VERE GROEN?
+ *
+ * Til 31.08.2026 stod `class="best"` HARDKODA paa fellesgjeld-rada. Ho var
+ * groen og feit uansett kva tala sa. I normaltilfellet peikte verktoeyet
+ * dermed ut 5,50 % som betre enn 8,40 % paa nabolinja — taparen som vinnar, i
+ * den eine tabellen som skal svare paa kva du boer gjere med pengane dine.
+ *
+ * REGELEN NO, i éi setning: ei rad er best naar talet hennar i den SYNLEGE
+ * kolonna er stoerre enn alt dei andre radene kan vere.
+ *
+ * «kan vere», ikkje «er», fordi éi rad er eit SPENN: bankinnskudd staar som
+ * «3,00–4,00 %». Ei rad som viser 3,50 % er ikkje trygt betre enn eit spenn som
+ * gaar til 4,00 %. Difor har kvar rad baade ein `verdi` (det som staar) og eit
+ * `tak` (det hoegste ho kan vere), og ein vinnar maa slaa alle dei andre sine
+ * TAK. Overlappar dei, blir INGEN merkt: to ting som kan vere like gode har
+ * ingen vinnar, og ein groen farge som seier noko anna er ei gjetting.
+ *
+ * (Difor kan det heller aldri vere to vinnarar: skulle to rader begge slaa alle
+ * dei andre sine tak, maatte kvar av dei slaa den andre, og det gaar ikkje.)
+ *
+ * TRE TING KAN IKKJE VINNE:
+ *
+ *  1. `verdi === null` — «Slippe billånet» har inga effektiv rente naar laanet
+ *     er saa lite at etableringsgebyret er stoerre enn utbetalinga. Rada kan
+ *     ikkje vinne, men fraveret hennar skal ikkje hindre at nokon andre gjer det.
+ *  2. `verdi <= 0` — «Nedbetale rentefritt lån» er alltid 0, og rada seier
+ *     sjoelv «aldri først». Ei groen null ville vore ei tilraading om ingenting.
+ *  3. Ei ABSURD rad — og ho stengjer HEILE tabellen, ikkje berre seg sjoelv.
+ *
+ * Punkt 3 er det einaste valet her som ikkje gir seg sjoelv. Er effektiv rente
+ * over 100 % skriv verktoeyet allereie i rada at talet er «matematisk riktig,
+ * men ubrukelig som sammenligning mot radene over — de gjelder lån i en helt
+ * annen størrelsesorden». Tre utgangar var moglege:
+ *
+ *   (a) merke den absurde rada — gjer eit tal verktoeyet nettopp har kalla
+ *       ubrukeleg om til ei tilraading.
+ *   (b) merke nest beste rad — VERRE enn (a). Da seier verktoeyet at det er
+ *       betre aa nedbetale gjeld til 5,5 % enn aa slippe eit laan til 250 %.
+ *       Det er ikkje forsiktig; det er feil raad.
+ *   (c) merke INGEN — vald. Naar éi rad er utanfor skala, er det SAMANLIKNINGA
+ *       som er broten, ikkje berre den eine rada. Tabellen har da ingen vinnar
+ *       aa peike paa, og teksten i rada forklarer allereie kvifor. Ei manglande
+ *       markering er lesbar; ei feil markering er det ikkje.
+ */
+const BIL_ALT_UBRUKELEG = 100;
+
+/** Bankinnskudd er eit spenn, ikkje eit tal. Lav og hoeg ende, foer og etter skatt. */
+const BIL_ALT_BANK = { lav:3.00, hoeg:4.00, lavSkatt:2.34, hoegSkatt:3.12 };
+
+/**
+ * Kva rad vinn?
+ * @param {{verdi:number|null, tak:number|null, utanfor:boolean}[]} rader
+ * @returns {number} indeks til vinnaren, eller -1 for ingen
+ */
+function bilAltVinnar(rader){
+  if(rader.some(r=>r.utanfor)) return -1;
+  for(let i=0;i<rader.length;i++){
+    const r=rader[i];
+    if(r.verdi===null || r.verdi<=0) continue;
+    let slaarAlle=true;
+    for(let j=0;j<rader.length && slaarAlle;j++){
+      if(j===i) continue;
+      const tak=rader[j].tak;
+      if(tak!==null && r.verdi<=tak) slaarAlle=false;
+    }
+    if(slaarAlle) return i;
+  }
+  return -1;
+}
+
+/**
+ * Radene med tal. `synleg` er kolonna markeringa blir avgjord av — ho endrar seg
+ * med fradrag-haken, og det er ho brukaren les.
+ * @param {{fg:number, eff:number|null, fradrag:boolean, arv:string, geb:string,
+ *          minilaan:string, bank:string}} o
+ */
+function bilAltRader(o){
+  const skatt = r => r===null ? null : (o.fradrag ? r*0.78 : r);
+  const fgS=skatt(o.fg), effS=skatt(o.eff);
+  const B=BIL_ALT_BANK;
+  const bankLav=o.fradrag?B.lavSkatt:B.lav, bankHoeg=o.fradrag?B.hoegSkatt:B.hoeg;
+  const spenn=(a,b)=>pst(a).replace(' %','')+'–'+pst(b);
+  return [
+    { tekst:'Nedbetale rentefritt lån — <b>aldri først</b>',
+      nom:pst(0), synleg:pst(0), verdi:0, tak:0, utanfor:false },
+    { tekst:'Nedbetale gjelden du har fra før'+o.arv,
+      nom:pst(o.fg), synleg:pstN(fgS), verdi:fgS, tak:fgS, utanfor:false },
+    { tekst:'Slippe billånet (effektiv)'+o.geb+o.minilaan,
+      nom:pstN(o.eff), synleg:pstN(effS), verdi:effS, tak:effS,
+      utanfor: o.eff!==null && o.eff>BIL_ALT_UBRUKELEG },
+    { tekst:'Bankinnskudd'+o.bank,
+      nom:spenn(B.lav,B.hoeg), synleg:spenn(bankLav,bankHoeg),
+      verdi:bankLav, tak:bankHoeg, utanfor:false },
+  ];
+}
+
+/** Heile tabellen, hovudrad og alt. */
+function bilAltTabellHtml(o){
+  const rader=bilAltRader(o), v=bilAltVinnar(rader);
+  return `<tr><th>Én krone brukt på</th><th>Nominelt</th>`
+    + `<th>${o.fradrag?'Etter skatt (22 %)':'Etter skatt (fradrag: 0)'}</th></tr>`
+    + rader.map((r,i)=>`<tr${i===v?' class="best"':''}><td>${r.tekst}</td>`
+        + `<td>${r.nom}</td><td>${r.synleg}</td></tr>`).join('');
+}
+/* ═════ vakt-anker: bilAlt slutt ═════════════════════════════════════════════ */
+
 function bilTegnValg(){
   const pris=num(BIL.pris), kontant=num(BIL.kontant), buffer=num(BIL.buffer);
   const faste=num(BIL.faste), sparing=num(BIL.sparing), fg=num(BIL.fgRente);
@@ -1295,19 +1414,19 @@ function bilTegnValg(){
     ? bilAnslag('fg','5,5 % er et rent anslag — og det er både hele renterisikoen og '+
         'referansepunktet i tabellen under. Overstyr med din egen sats over, så forsvinner merket.')
     : 'Egen sats lagt inn — anslagsmerket er fjernet.';
-  const arv=fgStd? ' '+bilAnslag('fgarv','bygger på anslått fellesgjeldsrente 5,5 %.') : '';
+  const arv=fgStd? ' '+bilAnslag('fgarv','bygger på anslått rente 5,5 % på gjelden du har fra før.') : '';
   const geb=bilAnslag('gebyr','etableringsgebyr 2 500 kr og termingebyr 85 kr er en '+
     'markedsramme fra undersøkelsen 18.08.2026, ikke ditt tilbud. De to tallene driver '+
     'effektiv rente, månedsterminen, hele rentestigen og undervannsgrafen — be banken '+
     'om de faktiske gebyrene og regn på nytt.');
   const bank=bilAnslag('bank','3–4 % er en markedsramme uten navngitt kilde.');
-  $('bilAltTabell').innerHTML=`
-    <tr><th>Én krone brukt på</th><th>Nominelt</th><th>${BIL.fradrag?'Etter skatt (22 %)':'Etter skatt (fradrag: 0)'}</th></tr>
-    <tr><td>Nedbetale rentefritt lån — <b>aldri først</b></td><td>${pst(0)}</td><td>${pst(0)}</td></tr>
-    <tr class="best"><td>Nedbetale fellesgjeld${arv}</td><td>${pst(fg)}</td><td>${pst(skatt(fg))}</td></tr>
-    <tr><td>Slippe billånet (effektiv)${geb}${eff!==null&&eff>100?bilAnslag('minilaan','så høy fordi etableringsgebyret dominerer et lite lån. Tallet er matematisk riktig, men ubrukelig som sammenligning mot radene over — de gjelder lån i en helt annen størrelsesorden.'):''}</td>
-      <td>${pstN(eff)}</td><td>${pstN(skatt(eff))}</td></tr>
-    <tr><td>Bankinnskudd${bank}</td><td>3,00–4,00 %</td><td>${BIL.fradrag?'2,34–3,12 %':'3,00–4,00 %'}</td></tr>`;
+  const minilaan = (eff!==null && eff>BIL_ALT_UBRUKELEG)
+    ? bilAnslag('minilaan','så høy fordi etableringsgebyret dominerer et lite lån. Tallet er '
+      + 'matematisk riktig, men ubrukelig som sammenligning mot radene over — de gjelder lån '
+      + 'i en helt annen størrelsesorden.')
+    : '';
+  $('bilAltTabell').innerHTML=bilAltTabellHtml({
+    fg, eff, fradrag:BIL.fradrag, arv, geb, minilaan, bank });
   const krav=2*faste, anbefalt=3*faste;
   const horisont=Math.round(num(BIL.aar)*12), laanMnd=n;
   const varselHorisont = laanMnd>horisont && horisont>0
@@ -1359,7 +1478,8 @@ function bilTegnStige(){
     <tr><th>Lånetype</th><th>Effektiv rente${kilde}</th></tr>
     <tr><td>Boliglån, 60 % belåning</td><td>5,07–5,15 %</td></tr>
     <tr><td>Billån m/salgspant, 35 % egenkapital</td><td>7,02 %</td></tr>
-    <tr class="best"><td>Billån ung, 100 % finansiering, 150k/5 år</td><td>8,40 %</td></tr>
+    <tr class="ref"><td>Billån ung, 100 % finansiering, 150k/5 år
+      <span class="ref-merke">— tallet regnestykket over bygger på</span></td><td>8,40 %</td></tr>
     <tr><td>Forbrukslån</td><td>10,7–12,7 %</td></tr>
     <tr><td>Kaskofritt småbillån, 100k/5 år</td><td>13,1 %</td></tr>`;
 }
