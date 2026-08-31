@@ -38,7 +38,7 @@ footer{margin-top:46px;padding-top:22px;border-top:1px solid var(--line);
 <body>
 
 <h1>Personvernerklæring</h1>
-<p class="meta">Smidd · sist oppdatert 28. august 2026 · <a href="en.html">English version</a></p>
+<p class="meta">Smidd · sist oppdatert 31. august 2026 · <a href="en.html">English version</a></p>
 
 <p>Denne erklæringen gjelder appen <b>Smidd</b>, som distribueres på Google Play
 under navnet <b>ProTracker</b>, pakkenavn <b>com.kagfr.protracker</b>.</p>
@@ -164,11 +164,18 @@ dagsform i sammenheng. De deles aldri, og du kan slette dem separat.</p>
       spørsmålene dine — og <b>matbilder</b>, hvis du bruker matbilde-funksjonen: bildet
       sendes for analyse, behandles i minnet og <b>lagres aldri</b> — verken hos oss eller
       som fil, i database eller i logg</td></tr>
-  <tr><td>Hva som ikke sendes</td><td>Lydopptak, fremgangsbilder, GPS-spor, e-postadressen
-      din, navnet ditt</td></tr>
+  <tr><td>Hva som ikke sendes</td><td>Lydopptak, fremgangsbilder, GPS-spor. Serveren
+      legger aldri ved e-postadressen din, navnet ditt eller et kontonummer — spørsmålet
+      ditt sendes uten noe som peker på hvem du er</td></tr>
+  <tr><td>Men husk</td><td>Skriver du navnet ditt, adressen din eller noe annet personlig
+      <i>inne i selve spørsmålet</i>, sendes det med — akkurat som du skrev det. Vi filtrerer
+      ikke teksten din. Det samme gjelder navn du selv har gitt treningsøkter og retter</td></tr>
 </table>
-<p class="liten">Innholdet i coach-samtalene logges aldri i klartekst i serverloggene våre.
-Det er teknisk sperret, ikke bare en regel.</p>
+<p class="liten">Innholdet i coach-samtalene skrives aldri til serverloggene i vanlig drift.
+Det er teknisk sperret, ikke bare en regel. Ett unntak vi kjenner: svarer AI-leverandøren med
+en feilmelding som siterer spørsmålet ditt tilbake til oss, kan den feilmeldingen havne i
+driftsloggen. Loggene roteres fortløpende og leses bare ved feilsøking. For taletolking er
+også dette sperret.</p>
 
 <h2>7. Hvem andre som er involvert</h2>
 <table>
@@ -176,6 +183,8 @@ Det er teknisk sperret, ikke bare en regel.</p>
   <tr><td>DigitalOcean</td><td>Serverdrift og lagring</td><td>Frankfurt, Tyskland (EØS)</td></tr>
   <tr><td>Anthropic PBC</td><td>AI-coach og taletolking</td><td>USA</td></tr>
   <tr><td>Open Food Facts</td><td>Oppslag på strekkoder. Kun strekkoden sendes — aldri hvem du er.</td><td>EU</td></tr>
+  <tr><td>Kassalapp</td><td>Pris- og varesøk for handlelista. Kun søkeordet eller strekkoden
+  sendes — aldri hvem du er, og aldri hva som ellers står på lista di.</td><td>Norge</td></tr>
   <tr><td>Google Maps Platform</td><td>Søk etter treningssentre i nærheten. Posisjonen din
       sendes kun idet du søker, og lagres ikke hos oss.</td><td>USA/globalt</td></tr>
   <tr><td>Google Play</td><td>Distribusjon av appen og behandling av kjøp</td><td>—</td></tr>
@@ -223,8 +232,15 @@ bare til feilsøking og til å hindre misbruk.</p>
 <h2>12. Hvor lenge vi lagrer</h2>
 <ul>
   <li><b>Kontoen og dataene dine:</b> til du sletter dem. Vi rydder ikke bort noe av oss selv.</li>
-  <li><b>Etter sletting:</b> borte fra databasen med én gang. Kan ligge igjen i en
-      sikkerhetskopi i inntil 30 dager før den roteres ut, og brukes ikke til noe imens.</li>
+  <li><b>Etter sletting:</b> kontoen, alle helse- og treningsdataene og alle innloggingene
+      er borte fra databasen med én gang. To ting blir liggende: <b>handlelista di</b> med
+      oppskrifter, handleturer og prisnotater, og <b>registreringen av hva du sa ja og nei
+      til</b> (uten helseopplysninger og uten e-postadresse — den dokumenterer at
+      behandlingen var lovlig mens den pågikk). Vil du ha handledataene slettet også, be oss
+      om det på e-postadressen øverst.</li>
+  <li><b>Sikkerhetskopier:</b> serveren kopieres hver natt, og kopiene slettes automatisk
+      etter 14 døgn. Sletter du kontoen rett etter en nattlig kopi, kan opplysningene ligge
+      i den siste kopien i <b>inntil 15 døgn</b>. De brukes ikke til noe imens.</li>
   <li><b>Innloggingstokener:</b> 30 dager, deretter må du logge inn på nytt.</li>
   <li><b>Serverlogger:</b> se punkt 11.</li>
 </ul>
@@ -260,6 +276,11 @@ opplysningene dine feil.</p>
 <p>Smidd er for deg som har fylt <b>18 år</b>. Helseopplysninger er en særlig kategori, og
 etter Datatilsynets veiledning er aldersgrensen for å samtykke til behandling av slike
 opplysninger 18 år.</p>
+<p>I dag lar appen deg likevel opprette konto fra <b>13 år</b>, som er den nedre grensen
+norsk rett setter for å samtykke selv. Er du under 18, virker kosthold, trening og resten
+av appen som normalt — men <b>de sosiale funksjonene</b> (treningspartner og treningsgjeng)
+er stengt til du fyller 18. Det er vår egen grense, satt fordi de funksjonene deler
+treningsdata mellom brukere.</p>
 
 <h2>16. Endringer</h2>
 <p>Endrer vi denne erklæringen på en måte som betyr noe for deg, sier vi fra i appen før

@@ -38,7 +38,7 @@ footer{margin-top:46px;padding-top:22px;border-top:1px solid var(--line);
 <body>
 
 <h1>Privacy Policy</h1>
-<p class="meta">Smidd · last updated 28 August 2026 · <a href="index.html">Norsk versjon</a></p>
+<p class="meta">Smidd · last updated 31 August 2026 · <a href="index.html">Norsk versjon</a></p>
 
 <p>This policy covers the app <b>Smidd</b>, distributed on Google Play
 under the name <b>ProTracker</b>, package name <b>com.kagfr.protracker</b>.</p>
@@ -167,11 +167,19 @@ encrypted.</p>
       of your questions — and <b>meal photos</b>, if you use the meal photo feature: the
       image is sent for analysis, processed in memory and <b>never stored</b> — not by us,
       not as a file, not in a database, not in a log</td></tr>
-  <tr><td>What is never sent</td><td>Audio recordings, progress photos, GPS tracks, your
-      email address, your name</td></tr>
+  <tr><td>What is never sent</td><td>Audio recordings, progress photos, GPS tracks. The
+      server never attaches your email address, your name or an account number — your
+      question is sent without anything that points to who you are</td></tr>
+  <tr><td>But note</td><td>If you write your name, your address or anything else personal
+      <i>inside the question itself</i>, it is sent along — exactly as you wrote it. We do
+      not filter your text. The same applies to names you have given your workouts and
+      recipes</td></tr>
 </table>
-<p class="liten">The content of coach conversations is never logged in clear text in our
-server logs. That is technically enforced, not just a rule.</p>
+<p class="liten">The content of coach conversations is never written to our server logs in
+normal operation. That is technically enforced, not just a rule. One exception we know of: if
+the AI provider replies with an error message that quotes your question back to us, that error
+message can end up in the operational log. Logs are rotated continuously and are read only
+when debugging. For speech interpretation this is blocked as well.</p>
 
 <h2>7. Who else is involved</h2>
 <table>
@@ -180,6 +188,8 @@ server logs. That is technically enforced, not just a rule.</p>
   <tr><td>Anthropic PBC</td><td>AI coach and voice interpretation</td><td>USA</td></tr>
   <tr><td>Open Food Facts</td><td>Barcode lookups. Only the barcode is sent — never who
       you are.</td><td>EU</td></tr>
+  <tr><td>Kassalapp</td><td>Price and product lookups for the shopping list. Only the search
+  term or the barcode is sent — never who you are, and never what else is on your list.</td><td>Norway</td></tr>
   <tr><td>Google Maps Platform</td><td>Nearby gym search. Your position is sent only when
       you search, and is not stored by us.</td><td>USA/global</td></tr>
   <tr><td>Google Play</td><td>App distribution and purchase processing</td><td>—</td></tr>
@@ -232,9 +242,15 @@ only for debugging and abuse prevention.</p>
 <ul>
   <li><b>Your account and data:</b> until you delete them. We never remove anything on
       our own.</li>
-  <li><b>After deletion:</b> gone from the database immediately. May remain in a backup
-      for up to 30 days before it is rotated out, and is not used for anything in the
-      meantime.</li>
+  <li><b>After deletion:</b> your account, all health and training data and all logins are
+      gone from the database immediately. Two things remain: <b>your shopping list</b> with
+      recipes, shopping trips and price notes, and <b>the record of what you consented to</b>
+      (with no health data and no email address — it documents that the processing was lawful
+      while it lasted). If you want the shopping data deleted too, ask us at the email address
+      at the top.</li>
+  <li><b>Backups:</b> the server is copied every night, and copies are deleted automatically
+      after 14 days. If you delete your account just after a nightly copy, the data may sit in
+      that last copy for <b>up to 15 days</b>. It is not used for anything in the meantime.</li>
   <li><b>Login tokens:</b> 30 days, after which you must log in again.</li>
   <li><b>Server logs:</b> see section 11.</li>
 </ul>
@@ -267,8 +283,13 @@ already done. You can complain to the Norwegian Data Protection Authority
 </ul>
 
 <h2>15. Age limit</h2>
-<p>Smidd is for people aged <b>18 or over</b>. Health data is a special category, and
-under the Norwegian DPA's guidance the age of consent for processing such data is 18.</p>
+<p>Health data is a special category, and under the Norwegian DPA's guidance the age of
+consent for processing such data is 18.</p>
+<p>Today the app nonetheless lets you create an account from the age of <b>13</b>, which is
+the lower limit Norwegian law sets for consenting on your own behalf. If you are under 18,
+nutrition, training and the rest of the app work as normal — but <b>the social features</b>
+(training partner and training group) are closed until you turn 18. That is our own limit,
+set because those features share training data between users.</p>
 
 <h2>16. Changes</h2>
 <p>If we change this policy in a way that matters to you, we will tell you in the app
