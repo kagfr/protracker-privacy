@@ -54,7 +54,7 @@ all of it for good — directly in the app.</p>
 <h2>1. Who is responsible</h2>
 <div class="kort">
 Kristian Andreas Gullbakk From<br>
-Email: kagfrom@hotmail.com<br>
+Email: personvern@smidd.app<br>
 Norway
 </div>
 <p>Contact us at the address above for anything concerning privacy, access or deletion.</p>
@@ -176,10 +176,10 @@ encrypted.</p>
       recipes</td></tr>
 </table>
 <p class="liten">The content of coach conversations is never written to our server logs in
-normal operation. That is technically enforced, not just a rule. One exception we know of: if
-the AI provider replies with an error message that quotes your question back to us, that error
-message can end up in the operational log. Logs are rotated continuously and are read only
-when debugging. For speech interpretation this is blocked as well.</p>
+normal operation. That is technically enforced, not just a rule — errors included: if
+the AI provider replies with an error message, we log only the error type and status code,
+never its content. The exception that previously stood here (an error message quoting your
+question could end up in the operational log) was closed in the code on 31 August 2026.</p>
 
 <h2>7. Who else is involved</h2>
 <table>
@@ -235,8 +235,9 @@ Nothing more.</p>
 <p>Request and response bodies, login tokens, passwords, email addresses and voice text
 are <b>explicitly redacted before anything is written to a log</b>. This is enforced in
 code, not just a principle.</p>
-<p class="liten">The logs contain no health data, are rotated continuously, and are used
-only for debugging and abuse prevention.</p>
+<p class="liten">The logs contain no health data and are used only for debugging and
+abuse prevention. They are not rotated automatically today and remain on the server
+until they are cleaned up.</p>
 
 <h2>12. How long we keep data</h2>
 <ul>
@@ -299,7 +300,7 @@ before the change takes effect. The date at the top shows when it was last updat
 
 <footer>
 <b>Contact</b><br>
-Kristian Andreas Gullbakk From · kagfrom@hotmail.com · Norway<br><br>
+Kristian Andreas Gullbakk From · personvern@smidd.app · Norway<br><br>
 Supervisory authority: Datatilsynet, Postboks 458 Sentrum, 0105 Oslo, Norway ·
 <a href="https://www.datatilsynet.no">datatilsynet.no</a><br><br>
 
