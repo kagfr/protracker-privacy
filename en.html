@@ -38,7 +38,7 @@ footer{margin-top:46px;padding-top:22px;border-top:1px solid var(--line);
 <body>
 
 <h1>Privacy Policy</h1>
-<p class="meta">Smidd · last updated 28 August 2026 · <a href="index.html">Norsk versjon</a></p>
+<p class="meta">Smidd · last updated 17 October 2026 · <a href="index.html">Norsk versjon</a></p>
 
 <p>This policy covers the app <b>Smidd</b>, distributed on Google Play
 under the name <b>ProTracker</b>, package name <b>com.kagfr.protracker</b>.</p>
@@ -54,7 +54,7 @@ all of it for good — directly in the app.</p>
 <h2>1. Who is responsible</h2>
 <div class="kort">
 Kristian Andreas Gullbakk From<br>
-Email: kagfrom@hotmail.com<br>
+Email: personvern@smidd.app<br>
 Norway
 </div>
 <p>Contact us at the address above for anything concerning privacy, access or deletion.</p>
@@ -86,6 +86,9 @@ hash</b> (never the password itself), <b>health-data consent with timestamp</b>,
   <li><b>From Health Connect:</b> sleep, steps and resting heart rate. The app
       <b>only reads</b> — it never writes anything back to Health Connect.</li>
 </ul>
+
+<h3>Health (iPhone) and Health Connect (Android)</h3>
+<p>If you connect Smidd to Health on iPhone or Health Connect on Android, the app reads three things per day: time asleep (not time in bed), step count and resting heart rate. The numbers are stored only locally on your phone, one row per day, and are used for readiness and training advice in the app. They are not sent to Smidd's server, not shared with anyone and never used for marketing. On iPhone you can additionally let Smidd write completed workouts (type, start and end) to Health; on Android Smidd writes nothing. You can revoke access at any time — on iPhone in Settings → Privacy &amp; Security → Health → Smidd, on Android in the Health Connect app. Numbers already read remain in the app until you delete the app.</p>
 
 <h3>Location</h3>
 <p>GPS tracks from runs you start yourself. Location is also used if you search for gyms
@@ -167,11 +170,19 @@ encrypted.</p>
       of your questions — and <b>meal photos</b>, if you use the meal photo feature: the
       image is sent for analysis, processed in memory and <b>never stored</b> — not by us,
       not as a file, not in a database, not in a log</td></tr>
-  <tr><td>What is never sent</td><td>Audio recordings, progress photos, GPS tracks, your
-      email address, your name</td></tr>
+  <tr><td>What is never sent</td><td>Audio recordings, progress photos, GPS tracks. The
+      server never attaches your email address, your name or an account number — your
+      question is sent without anything that points to who you are</td></tr>
+  <tr><td>But note</td><td>If you write your name, your address or anything else personal
+      <i>inside the question itself</i>, it is sent along — exactly as you wrote it. We do
+      not filter your text. The same applies to names you have given your workouts and
+      recipes</td></tr>
 </table>
-<p class="liten">The content of coach conversations is never logged in clear text in our
-server logs. That is technically enforced, not just a rule.</p>
+<p class="liten">The content of coach conversations is never written to our server logs in
+normal operation. That is technically enforced, not just a rule — errors included: if
+the AI provider replies with an error message, we log only the error type and status code,
+never its content. The exception that previously stood here (an error message quoting your
+question could end up in the operational log) was closed in the code on 31 August 2026.</p>
 
 <h2>7. Who else is involved</h2>
 <table>
@@ -180,6 +191,8 @@ server logs. That is technically enforced, not just a rule.</p>
   <tr><td>Anthropic PBC</td><td>AI coach and voice interpretation</td><td>USA</td></tr>
   <tr><td>Open Food Facts</td><td>Barcode lookups. Only the barcode is sent — never who
       you are.</td><td>EU</td></tr>
+  <tr><td>Kassalapp</td><td>Price and product lookups for the shopping list. Only the search
+  term or the barcode is sent — never who you are, and never what else is on your list.</td><td>Norway</td></tr>
   <tr><td>Google Maps Platform</td><td>Nearby gym search. Your position is sent only when
       you search, and is not stored by us.</td><td>USA/global</td></tr>
   <tr><td>Google Play</td><td>App distribution and purchase processing</td><td>—</td></tr>
@@ -225,16 +238,25 @@ Nothing more.</p>
 <p>Request and response bodies, login tokens, passwords, email addresses and voice text
 are <b>explicitly redacted before anything is written to a log</b>. This is enforced in
 code, not just a principle.</p>
-<p class="liten">The logs contain no health data, are rotated continuously, and are used
-only for debugging and abuse prevention.</p>
+<p class="liten">The logs contain no health data and are used only for debugging and
+abuse prevention. They are not rotated automatically today and remain on the server
+until they are cleaned up.</p>
 
 <h2>12. How long we keep data</h2>
 <ul>
   <li><b>Your account and data:</b> until you delete them. We never remove anything on
       our own.</li>
-  <li><b>After deletion:</b> gone from the database immediately. May remain in a backup
-      for up to 30 days before it is rotated out, and is not used for anything in the
-      meantime.</li>
+  <li><b>After deletion:</b> your account, all health and training data, <b>your shopping
+      list</b> with recipes, shopping trips and price notes, and all logins are gone from the
+      database immediately. One thing always remains: <b>the record of what you consented
+      to</b> (with no health data and no email address — it documents that the processing was
+      lawful while it lasted). If you have been a moderator in a training group, or been
+      moderated by one, <b>the log of that action</b> also remains: who did what and when,
+      with no health data and no email address. It stays because it is the documentation for
+      both parties.</li>
+  <li><b>Backups:</b> the server is copied every night, and copies are deleted automatically
+      after 14 days. If you delete your account just after a nightly copy, the data may sit in
+      that last copy for <b>up to 15 days</b>. It is not used for anything in the meantime.</li>
   <li><b>Login tokens:</b> 30 days, after which you must log in again.</li>
   <li><b>Server logs:</b> see section 11.</li>
 </ul>
@@ -267,8 +289,12 @@ already done. You can complain to the Norwegian Data Protection Authority
 </ul>
 
 <h2>15. Age limit</h2>
-<p>Smidd is for people aged <b>18 or over</b>. Health data is a special category, and
-under the Norwegian DPA's guidance the age of consent for processing such data is 18.</p>
+<p>Health data is a special category, and under the Norwegian DPA's guidance the age of
+consent for processing such data is 18.</p>
+<p>You must therefore be <b>18</b> to create a Smidd account. The limit is enforced both in
+the app and on the server. Section 5 of the Norwegian Personal Data Act sets 13 as the lower
+limit for consenting on your own behalf under Article 6 of the GDPR, but that provision does not
+cover consent to health data under Article 9 — and health data is what Smidd processes.</p>
 
 <h2>16. Changes</h2>
 <p>If we change this policy in a way that matters to you, we will tell you in the app
@@ -276,7 +302,7 @@ before the change takes effect. The date at the top shows when it was last updat
 
 <footer>
 <b>Contact</b><br>
-Kristian Andreas Gullbakk From · kagfrom@hotmail.com · Norway<br><br>
+Kristian Andreas Gullbakk From · personvern@smidd.app · Norway<br><br>
 Supervisory authority: Datatilsynet, Postboks 458 Sentrum, 0105 Oslo, Norway ·
 <a href="https://www.datatilsynet.no">datatilsynet.no</a><br><br>
 
